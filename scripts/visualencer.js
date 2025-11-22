@@ -1,0 +1,800 @@
+const VISUALENCER_ID = "visualencer";
+
+/* =========================
+ * Settings
+ * ======================= */
+
+Hooks.once("init", () => {
+  console.log("Visualencer | init");
+
+  game.settings.register(VISUALENCER_ID, "currentGraph", {
+    name: "Visualencer graph",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: {
+      nodes: {},
+      connections: []
+    }
+  });
+});
+
+/* =========================
+ * Node type registry
+ * ======================= */
+
+export const VisualencerNodeTypes = {
+  _defs: {},
+
+  register(type, def) {
+    this._defs[type] = def;
+  },
+
+  get(type) {
+    return this._defs[type];
+  },
+
+  all() {
+    return Object.entries(this._defs).map(([type, def]) => ({ type, ...def }));
+  }
+};
+
+/* =========================
+ * Graph model
+ * ======================= */
+
+class VisualencerGraph {
+  constructor(data = {}) {
+    this.nodes = data.nodes || {};
+    this.connections = data.connections || [];
+  }
+
+  static fromSettings() {
+    const data = foundry.utils.deepClone(
+      game.settings.get(VISUALENCER_ID, "currentGraph")
+    );
+    return new VisualencerGraph(data);
+  }
+
+  async save() {
+    await game.settings.set(VISUALENCER_ID, "currentGraph", this.toJSON());
+  }
+
+  toJSON() {
+    return {
+      nodes: this.nodes,
+      connections: this.connections
+    };
+  }
+
+  addNode(type, x = 100, y = 100) {
+    const def = VisualencerNodeTypes.get(type);
+    if (!def) throw new Error(`Tipo de nodo desconocido: ${type}`);
+
+    const id = foundry.utils.randomID();
+    this.nodes[id] = {
+      id,
+      type,
+      x,
+      y,
+      config: def.createConfig ? def.createConfig() : {}
+    };
+    return this.nodes[id];
+  }
+
+  removeNode(id) {
+    delete this.nodes[id];
+    this.connections = this.connections.filter(
+      (c) => c.from !== id && c.to !== id
+    );
+  }
+
+  connect(fromId, toId) {
+    this.connections = this.connections.filter((c) => c.from !== fromId);
+    this.connections.push({ from: fromId, to: toId });
+  }
+
+  disconnectFrom(fromId) {
+    this.connections = this.connections.filter((c) => c.from !== fromId);
+  }
+
+  findNext(id) {
+    const conn = this.connections.find((c) => c.from === id);
+    if (!conn) return null;
+    return this.nodes[conn.to] || null;
+  }
+
+  findStart() {
+    const list = Object.values(this.nodes);
+    if (!list.length) return null;
+    return list.find((n) => n.type === "start") || list[0];
+  }
+
+  linearOrder() {
+    const start = this.findStart();
+    if (!start) return [];
+
+    const order = [];
+    const visited = new Set();
+    let current = start;
+
+    while (current && !visited.has(current.id)) {
+      order.push(current);
+      visited.add(current.id);
+      current = this.findNext(current.id);
+    }
+    return order;
+  }
+}
+
+/* =========================
+ * Compiler (graph -> macro JS)
+ * ======================= */
+
+class VisualencerCompiler {
+  static compile(graph, options = {}) {
+    const order = graph.linearOrder();
+    const ctx = {
+      lines: []
+    };
+
+    let block = null;
+
+    const flushBlock = () => {
+      if (!block) return;
+      const lines = block.lines || [];
+      if (lines.length) {
+        const lastIndex = lines.length - 1;
+        const lastLine = lines[lastIndex];
+        if (!lastLine.trimEnd().endsWith(";")) {
+          lines[lastIndex] = lastLine + ";";
+        }
+        ctx.lines.push(...lines);
+      }
+      block = null;
+    };
+
+    for (const node of order) {
+      const def = VisualencerNodeTypes.get(node.type);
+      if (!def) continue;
+
+      const role = def.role || "legacy";
+
+      if (role === "root") {
+        flushBlock();
+
+        block = {
+          family: def.family || node.type,
+          nodeId: node.id,
+          lines: []
+        };
+
+        if (typeof def.compileRoot === "function") {
+          def.compileRoot(node, block, ctx);
+        } else if (typeof def.compile === "function") {
+          def.compile(node, ctx);
+          block = null;
+        }
+
+        continue;
+      }
+
+      if (role === "child") {
+        if (!block) continue;
+
+        const families = def.families || def.family || null;
+        if (families) {
+          const famList = Array.isArray(families) ? families : [families];
+          if (!famList.includes(block.family)) {
+            continue;
+          }
+        }
+
+        if (typeof def.compileChild === "function") {
+          def.compileChild(node, block, ctx);
+        } else if (typeof def.compile === "function") {
+          def.compile(node, block, ctx);
+        }
+
+        continue;
+      }
+
+      flushBlock();
+
+      if (typeof def.compile === "function") {
+        def.compile(node, ctx);
+      }
+    }
+
+    flushBlock();
+
+    const macroName = options.name || "Visualencer Macro";
+    const body = ctx.lines.join("\n  ");
+
+    const code = `// Macro generated by Visualencer
+// Requires the “Sequencer” module
+if (!game.modules.get(“sequencer”)?.active) {
+  ui.notifications.error(“Visualencer: the Sequencer module is not active.”);
+  return;
+}
+
+(async () => {
+  const seq = new Sequence();
+
+  ${body}
+
+  await seq.play();
+})();`;
+
+    return { code, name: macroName };
+  }
+
+  static async createMacro(graph, options = {}) {
+    const { code, name } = this.compile(graph, options);
+
+    const macro = await Macro.create({
+      name,
+      type: "script",
+      command: code,
+      img: "icons/svg/explosion.svg",
+      scope: "global"
+    });
+
+    ui.notifications.info(`Visualencer: Macro "${macro.name}" created.`);
+    return macro;
+  }
+}
+
+/* =========================
+ * Application UI
+ * ======================= */
+
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+const MODULE_ID = "visualencer";
+
+class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    super.DEFAULT_OPTIONS,
+    {
+      id: "visualencer-app",
+      classes: ["visualencer"],
+      window: {
+        title: "Visualencer",
+        icon: "fas fa-project-diagram",
+        resizable: true
+      },
+      position: {
+        width: 900,
+        height: 600
+      }
+    },
+    { inplace: false }
+  );
+
+  static PARTS = {
+    body: {
+      id: "body",
+      template: `modules/${MODULE_ID}/templates/visualencer.hbs`,
+      scrollable: [".visualencer-canvas"]
+    }
+  };
+
+  static get instance() {
+    if (!this._instance) this._instance = new this();
+    return this._instance;
+  }
+
+  constructor(options = {}) {
+    super(options);
+    this.graph = VisualencerGraph.fromSettings();
+
+    this._dragging = null;
+    this._pendingLinkFrom = null;
+
+    this._panX = 0;
+    this._panY = 0;
+
+    this._panning = null;
+
+    this._linkDrag = null;
+  }
+
+  async _prepareContext(_options) {
+    return {
+      graph: this.graph.toJSON(),
+      nodeTypes: VisualencerNodeTypes.all(),
+      panX: this._panX || 0,
+      panY: this._panY || 0
+    };
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    this._activateListeners();
+  }
+
+  _activateListeners() {
+    const root = this.element;
+    if (!root) return;
+
+    const $root = $(root);
+
+    const addBtn = root.querySelector(".v-add-node");
+    const typeSelect = root.querySelector(".v-add-type");
+    if (addBtn && typeSelect) {
+      addBtn.onclick = async (event) => {
+        event.preventDefault();
+        const type = typeSelect.value;
+        if (!type) return;
+
+        this.graph.addNode(type, 100, 100);
+        await this.graph.save();
+        this.render();
+        ui.notifications.info(`Visualencer: nodo "${type}" creado.`);
+      };
+    }
+
+    const compileBtn = root.querySelector(".v-compile");
+    if (compileBtn) {
+      compileBtn.onclick = (event) => {
+        event.preventDefault();
+        this._onCompile();
+      };
+    }
+
+    const $canvas = $root.find(".visualencer-canvas");
+    $canvas.on("mousedown.visualencer", (ev) => this._onCanvasMouseDown(ev));
+    $canvas.on("contextmenu.visualencer", (ev) => this._onCanvasContext(ev));
+
+    root.querySelectorAll(".v-node").forEach((nodeEl) => {
+      const nodeId = nodeEl.dataset.nodeId;
+      if (!nodeId) return;
+
+      const deleteBtn = nodeEl.querySelector(".v-node-delete");
+      if (deleteBtn) {
+        deleteBtn.onclick = (event) => {
+          event.preventDefault();
+          this._onDeleteNode(nodeId);
+        };
+      }
+
+      const header = nodeEl.querySelector(".v-node-header");
+      if (header) {
+        header.onmousedown = (event) => this._onNodeDragStart(event, nodeId);
+      }
+
+      nodeEl
+        .querySelectorAll(
+          ".v-node-body input, .v-node-body select, .v-node-body textarea"
+        )
+        .forEach((input) => {
+          input.onchange = (event) => this._onConfigChange(event, nodeId);
+        });
+
+      const portOut = nodeEl.querySelector(".v-port-out");
+      const portIn = nodeEl.querySelector(".v-port-in");
+
+      if (portOut) {
+        portOut.onmousedown = (event) => {
+          this._onPortOutMouseDown(event, nodeId);
+        };
+      }
+
+      if (portIn) {
+        portIn.onclick = (event) => {
+          event.preventDefault();
+          this._onPortInClick(nodeId);
+        };
+      }
+    });
+
+    this._drawConnections();
+  }
+
+  /* === Handlers internos === */
+
+  async _onDeleteNode(nodeId) {
+    this.graph.removeNode(nodeId);
+    await this.graph.save();
+    this.render();
+  }
+
+  _onNodeDragStart(event, nodeId) {
+    event.preventDefault();
+    const node = this.graph.nodes[nodeId];
+    if (!node) return;
+    this._dragging = {
+      nodeId,
+      startX: event.clientX,
+      startY: event.clientY,
+      origX: node.x,
+      origY: node.y
+    };
+
+    const move = (ev) => this._onNodeDragMove(ev);
+    const up = (ev) => this._onNodeDragEnd(ev, move, up);
+
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", up);
+  }
+
+  _onNodeDragMove(ev) {
+    if (!this._dragging) return;
+
+    const d = this._dragging;
+    const node = this.graph.nodes[d.nodeId];
+    if (!node) return;
+
+    const dx = ev.clientX - d.startX;
+    const dy = ev.clientY - d.startY;
+
+    node.x = d.origX + dx;
+    node.y = d.origY + dy;
+
+    const $app = $(this.element);
+    const $node = $app.find(`.v-node[data-node-id="${d.nodeId}"]`);
+    $node.css({
+      left: `${node.x}px`,
+      top: `${node.y}px`
+    });
+
+    this._drawConnections();
+  }
+
+  async _onNodeDragEnd(_event, move, up) {
+    if (!this._dragging) return;
+
+    document.removeEventListener("mousemove", move);
+    document.removeEventListener("mouseup", up);
+
+    this._dragging = null;
+    await this.graph.save();
+  }
+
+  _onPortOutMouseDown(event, nodeId) {
+    if (event.button !== 0) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    this._pendingLinkFrom = nodeId;
+
+    this._linkDrag = {
+      fromId: nodeId
+    };
+
+    const move = (ev) => this._onLinkDragMove(ev);
+    const up = (ev) => this._onLinkDragEnd(ev, move, up);
+
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", up);
+  }
+
+  _onLinkDragMove(_ev) {
+    // dibujado del cable
+  }
+
+  async _onLinkDragEnd(ev, move, up) {
+    document.removeEventListener("mousemove", move);
+    document.removeEventListener("mouseup", up);
+
+    if (!this._linkDrag) return;
+
+    ev.preventDefault();
+    ev.stopPropagation();
+
+    const fromId = this._linkDrag.fromId;
+    this._linkDrag = null;
+
+    const target = ev.target;
+    const portInEl = target.closest?.(".v-port-in");
+    if (portInEl) {
+      const nodeEl = portInEl.closest(".v-node");
+      const toId = nodeEl?.dataset.nodeId;
+      if (toId && toId !== fromId) {
+        this.graph.connect(fromId, toId);
+        await this.graph.save();
+        this.render(false);
+        return;
+      }
+    }
+
+    this._showContextMenu(ev, { fromId });
+  }
+
+  _drawConnections() {
+    if (!this.element) return;
+
+    const $app = $(this.element);
+    const $canvas = $app.find(".visualencer-canvas");
+    const $svg = $canvas.find("svg.v-connections");
+    if (!$svg.length) return;
+
+    $svg.empty();
+
+    const canvasOffset = $canvas.offset();
+    if (!canvasOffset) return;
+
+    const ns = "http://www.w3.org/2000/svg";
+
+    for (const conn of this.graph.connections) {
+      const fromId = conn.from;
+      const toId = conn.to;
+
+      const $fromPort = $canvas.find(
+        `.v-node[data-node-id="${fromId}"] .v-port-out`
+      );
+      const $toPort = $canvas.find(
+        `.v-node[data-node-id="${toId}"] .v-port-in`
+      );
+
+      if (!$fromPort.length || !$toPort.length) continue;
+
+      const fromOffset = $fromPort.offset();
+      const toOffset = $toPort.offset();
+      if (!fromOffset || !toOffset) continue;
+
+      const x1 =
+        fromOffset.left - canvasOffset.left + $fromPort.outerWidth() / 2;
+      const y1 =
+        fromOffset.top - canvasOffset.top + $fromPort.outerHeight() / 2;
+      const x2 =
+        toOffset.left - canvasOffset.left + $toPort.outerWidth() / 2;
+      const y2 =
+        toOffset.top - canvasOffset.top + $toPort.outerHeight() / 2;
+
+      const dx = Math.abs(x2 - x1);
+      const c1x = x1 + dx / 2;
+      const c2x = x2 - dx / 2;
+
+      const dPath = `M ${x1} ${y1} C ${c1x} ${y1} ${c2x} ${y2} ${x2} ${y2}`;
+
+      const path = document.createElementNS(ns, "path");
+      path.setAttribute("d", dPath);
+      path.setAttribute("class", "v-connection");
+
+      $svg[0].appendChild(path);
+    }
+  }
+
+  _onCanvasMouseDown(ev) {
+    if (ev.button !== 1) return;
+
+    const $targetNode = $(ev.target).closest(".v-node");
+    if ($targetNode.length) return;
+
+    ev.preventDefault();
+
+    this._panning = {
+      startX: ev.clientX,
+      startY: ev.clientY,
+      origPanX: this._panX || 0,
+      origPanY: this._panY || 0
+    };
+
+    $(document).on("mousemove.visualencerPan", (e) =>
+      this._onCanvasPanMove(e)
+    );
+    $(document).on("mouseup.visualencerPan", (e) =>
+      this._onCanvasPanEnd(e)
+    );
+  }
+
+  _onCanvasPanMove(ev) {
+    if (!this._panning) return;
+
+    const d = this._panning;
+    this._panX = d.origPanX + (ev.clientX - d.startX);
+    this._panY = d.origPanY + (ev.clientY - d.startY);
+
+    const $app = $(this.element);
+    const $inner = $app.find(".v-canvas-inner");
+    $inner.css("transform", `translate(${this._panX}px, ${this._panY}px)`);
+
+    this._drawConnections();
+  }
+
+  _onCanvasPanEnd(_ev) {
+    if (!this._panning) return;
+    this._panning = null;
+    $(document).off(".visualencerPan");
+  }
+
+  _onCanvasContext(ev) {
+    ev.preventDefault();
+
+    const $target = $(ev.target);
+
+    let fromId = this._pendingLinkFrom || null;
+
+    const $portOut = $target.closest(".v-port-out");
+    if (!fromId && $portOut.length) {
+      fromId = $portOut.closest(".v-node").data("nodeId");
+    }
+
+    this._showContextMenu(ev, { fromId });
+  }
+
+  _showContextMenu(ev, { fromId } = {}) {
+    if (!this.element) return;
+
+    const $app = $(this.element);
+    const $canvas = $app.find(".visualencer-canvas");
+
+    $canvas.find(".v-context-menu").remove();
+
+    const canvasOffset = $canvas.offset();
+    if (!canvasOffset) return;
+
+    const xCanvas = ev.clientX - canvasOffset.left;
+    const yCanvas = ev.clientY - canvasOffset.top;
+
+    const graphX = xCanvas - (this._panX || 0);
+    const graphY = yCanvas - (this._panY || 0);
+
+    const $menu = $(`
+      <div class="v-context-menu">
+        <input type="text" class="v-context-search" placeholder="Create node...">
+        <ul class="v-context-list"></ul>
+      </div>
+    `).appendTo($canvas);
+
+    $menu.css({
+      left: xCanvas,
+      top: yCanvas
+    });
+
+    const $list = $menu.find(".v-context-list");
+    const types = VisualencerNodeTypes.all();
+
+    for (const t of types) {
+      const $li = $(`<li data-type="${t.type}">${t.label}</li>`);
+      $list.append($li);
+    }
+
+    const $search = $menu.find(".v-context-search");
+    $search.on("input", () => {
+      const term = ($search.val() || "").toString().toLowerCase();
+      $list.children("li").each(function () {
+        const $li = $(this);
+        const txt = $li.text().toLowerCase();
+        $li.toggle(txt.includes(term));
+      });
+    });
+    $search.trigger("focus");
+
+    $list.on("click", "li", async (e2) => {
+      const type = $(e2.currentTarget).data("type");
+      await this._createNodeFromContext(type, graphX, graphY, { fromId });
+      $menu.remove();
+      $(document).off(".visualencerContext");
+    });
+
+    const closeMenu = () => {
+      $menu.remove();
+      $(document).off(".visualencerContext");
+    };
+
+    $(document).on("mousedown.visualencerContext", (eDoc) => {
+      if (!$(eDoc.target).closest(".v-context-menu").length) {
+        closeMenu();
+      }
+    });
+
+    $(document).on("keydown.visualencerContext", (eDoc) => {
+      if (eDoc.key === "Escape") {
+        closeMenu();
+      }
+    });
+  }
+
+  async _createNodeFromContext(type, graphX, graphY, { fromId } = {}) {
+    const node = this.graph.addNode(type, graphX, graphY);
+
+    if (fromId) {
+      this.graph.connect(fromId, node.id);
+      this._pendingLinkFrom = null;
+    }
+
+    await this.graph.save();
+    this.render(false);
+  }
+
+  async _onConfigChange(event, nodeId) {
+    const input = event.currentTarget;
+    const key = input.dataset.config;
+    const type = input.dataset.type || "string";
+
+    const node = this.graph.nodes[nodeId];
+    if (!node || !key) return;
+
+    let value;
+    if (type === "number") value = Number(input.value || 0);
+    else if (type === "boolean") value = input.checked;
+    else value = input.value;
+
+    if (!node.config) node.config = {};
+    node.config[key] = value;
+
+    await this.graph.save();
+  }
+
+  _onPortOutClick(nodeId) {
+    this._pendingLinkFrom = nodeId;
+    ui.notifications.info(
+      "Visualencer: ahora haz clic en el puerto IN del siguiente nodo."
+    );
+  }
+
+  async _onPortInClick(nodeId) {
+    const from = this._pendingLinkFrom;
+    this._pendingLinkFrom = null;
+
+    if (!from || from === nodeId) return;
+
+    this.graph.connect(from, nodeId);
+    await this.graph.save();
+    this.render();
+  }
+
+  async _onCompile() {
+    const { code } = VisualencerCompiler.compile(this.graph, {
+      name: "Visualencer Macro"
+    });
+
+    const content = `
+      <div class="visualencer-export">
+        <p>This is the generated code. You can copy and paste it into a macro.</p>
+        <textarea rows="20" style="width:100%; font-family:monospace;">${foundry.utils.escapeHTML(
+          code
+        )}</textarea>
+      </div>
+    `;
+
+    new Dialog({
+      title: "Visualencer - Export Macro",
+      content,
+      buttons: {
+        macro: {
+          icon: '<i class="fas fa-magic"></i>',
+          label: "Create Macro",
+          callback: () =>
+            VisualencerCompiler.createMacro(this.graph, {
+              name: "Visualencer Macro"
+            })
+        },
+        close: {
+          label: "Close"
+        }
+      },
+      default: "close"
+    }).render(true);
+  }
+}
+
+/* =========================
+ * Hook ready: botón en la barra de controles
+ * ======================= */
+
+Hooks.on("getSceneControlButtons", (controls) => {
+  const tokenControls = controls.tokens ?? controls.token;
+  if (!tokenControls) return;
+
+  if (!tokenControls.tools) tokenControls.tools = {};
+
+  tokenControls.tools.visualencer = {
+    name: "visualencer",
+    title: "Visualencer",
+    icon: "fas fa-project-diagram",
+    order: Object.keys(tokenControls.tools).length,
+    button: true,
+    visible: game.user.isGM,
+    onChange: () => {
+      const existing = foundry.applications.instances.get("visualencer-app");
+      if (existing) existing.bringToFront();
+      else VisualencerApp.instance.render(true);
+    }
+  };
+
+  console.log("Visualencer | ready");
+});

@@ -1,0 +1,28 @@
+{
+  "id": "visualencer",
+  "title": "Visualencer - A Sequencer visual scripting module",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "flags": {
+    "canUpload": true
+  },
+  "esmodules": [
+    "scripts/visualencer.js", "scripts/visualencer-nodes.js"
+  ],
+  "styles": [
+    "styles/visualencer.css"
+  ],
+  "relationships": {
+    "requires": [
+      {
+        "id": "sequencer",
+        "type": "module",
+        "compatibility": {}
+      }
+    ]
+  },
+  "description": ""
+}

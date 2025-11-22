@@ -1,0 +1,1286 @@
+{{!-- ========== PARTIALS COMUNES ========== --}}
+
+{{#*inline "v-fade-direction"}}
+  <div class="v-field">
+    <label>{{label}} dur
+      <input type="number"
+             data-config="{{durKey}}"
+             data-type="number"
+             value="{{lookup config durKey}}">
+    </label>
+  </div>
+  <div class="v-field">
+<label>Ease<select data-config="ease">
+                    <option value="linear"           {{#if (eq node.config.ease "linear")}}selected{{/if}}>linear</option>
+                    <option value="easeInSine"       {{#if (eq node.config.ease "easeInSine")}}selected{{/if}}>easeInSine</option>
+                    <option value="easeOutSine"      {{#if (eq node.config.ease "easeOutSine")}}selected{{/if}}>easeOutSine</option>
+                    <option value="easeInOutSine"    {{#if (eq node.config.ease "easeInOutSine")}}selected{{/if}}>easeInOutSine</option>
+                    <option value="easeInQuad"       {{#if (eq node.config.ease "easeInQuad")}}selected{{/if}}>easeInQuad</option>
+                    <option value="easeOutQuad"      {{#if (eq node.config.ease "easeOutQuad")}}selected{{/if}}>easeOutQuad</option>
+                    <option value="easeInOutQuad"    {{#if (eq node.config.ease "easeInOutQuad")}}selected{{/if}}>easeInOutQuad</option>
+                    <option value="easeInCubic"      {{#if (eq node.config.ease "easeInCubic")}}selected{{/if}}>easeInCubic</option>
+                    <option value="easeOutCubic"     {{#if (eq node.config.ease "easeOutCubic")}}selected{{/if}}>easeOutCubic</option>
+                    <option value="easeInOutCubic"   {{#if (eq node.config.ease "easeInOutCubic")}}selected{{/if}}>easeInOutCubic</option>
+                    <option value="easeInQuart"      {{#if (eq node.config.ease "easeInQuart")}}selected{{/if}}>easeInQuart</option>
+                    <option value="easeOutQuart"     {{#if (eq node.config.ease "easeOutQuart")}}selected{{/if}}>easeOutQuart</option>
+                    <option value="easeInOutQuart"   {{#if (eq node.config.ease "easeInOutQuart")}}selected{{/if}}>easeInOutQuart</option>
+                    <option value="easeInQuint"      {{#if (eq node.config.ease "easeInQuint")}}selected{{/if}}>easeInQuint</option>
+                    <option value="easeOutQuint"     {{#if (eq node.config.ease "easeOutQuint")}}selected{{/if}}>easeOutQuint</option>
+                    <option value="easeInOutQuint"   {{#if (eq node.config.ease "easeInOutQuint")}}selected{{/if}}>easeInOutQuint</option>
+                    <option value="easeInExpo"       {{#if (eq node.config.ease "easeInExpo")}}selected{{/if}}>easeInExpo</option>
+                    <option value="easeOutExpo"      {{#if (eq node.config.ease "easeOutExpo")}}selected{{/if}}>easeOutExpo</option>
+                    <option value="easeInOutExpo"    {{#if (eq node.config.ease "easeInOutExpo")}}selected{{/if}}>easeInOutExpo</option>
+                    <option value="easeInCirc"       {{#if (eq node.config.ease "easeInCirc")}}selected{{/if}}>easeInCirc</option>
+                    <option value="easeOutCirc"      {{#if (eq node.config.ease "easeOutCirc")}}selected{{/if}}>easeOutCirc</option>
+                    <option value="easeInOutCirc"    {{#if (eq node.config.ease "easeInOutCirc")}}selected{{/if}}>easeInOutCirc</option>
+                    <option value="easeInBack"       {{#if (eq node.config.ease "easeInBack")}}selected{{/if}}>easeInBack</option>
+                    <option value="easeOutBack"      {{#if (eq node.config.ease "easeOutBack")}}selected{{/if}}>easeOutBack</option>
+                    <option value="easeInOutBack"    {{#if (eq node.config.ease "easeInOutBack")}}selected{{/if}}>easeInOutBack</option>
+                    <option value="easeInElastic"    {{#if (eq node.config.ease "easeInElastic")}}selected{{/if}}>easeInElastic</option>
+                    <option value="easeOutElastic"   {{#if (eq node.config.ease "easeOutElastic")}}selected{{/if}}>easeOutElastic</option>
+                    <option value="easeInOutElastic" {{#if (eq node.config.ease "easeInOutElastic")}}selected{{/if}}>easeInOutElastic</option>
+                    <option value="easeInBounce"     {{#if (eq node.config.ease "easeInBounce")}}selected{{/if}}>easeInBounce</option>
+                    <option value="easeOutBounce"    {{#if (eq node.config.ease "easeOutBounce")}}selected{{/if}}>easeOutBounce</option>
+                    <option value="easeInOutBounce"  {{#if (eq node.config.ease "easeInOutBounce")}}selected{{/if}}>easeInOutBounce</option>
+                  </select>
+                </label>
+  </div>
+  <div class="v-field">
+    <label>{{label}} delay
+      <input type="number"
+             data-config="{{delayKey}}"
+             data-type="number"
+             value="{{lookup config delayKey}}">
+    </label>
+  </div>
+{{/inline}}
+
+
+
+<div class="visualencer">
+  <header class="v-toolbar">
+    <label>
+      Type:
+      <select class="v-add-type">
+        {{#each nodeTypes as |nt|}}
+          <option value="{{nt.type}}">{{nt.label}}</option>
+        {{/each}}
+      </select>
+    </label>
+    <button type="button" class="v-add-node">
+      <i class="fas fa-plus"></i> Add node
+    </button>
+
+    <button type="button" class="v-compile">
+      <i class="fas fa-file-export"></i> Export to macro
+    </button>
+  </header>
+
+  <section class="visualencer-canvas">
+    {{!-- Capa de conexiones (SVG) --}}
+    <svg class="v-connections"></svg>
+    
+    {{!-- Contenedor interno paneable --}}
+    <div class="v-canvas-inner" style="transform: translate({{panX}}px, {{panY}}px);">
+
+    {{#each graph.nodes as |node id|}}
+      <div class="v-node" data-node-id="{{id}}" style="left: {{node.x}}px; top: {{node.y}}px;">
+        <div class="v-node-header">
+          <span class="v-node-title">{{node.type}}</span>
+          <a class="v-node-delete"><i class="fas fa-times"></i></a>
+        </div>
+
+        <div class="v-node-ports">
+          <div class="v-port v-port-in" data-port="in" title="Entrada"></div>
+          <div class="v-port v-port-out" data-port="out" title="Salida"></div>
+        </div>
+
+        <div class="v-node-body">
+          {{!-- START --}}
+          {{#if (eq node.type "start")}}
+            <p>Sequencer start node.</p>
+          {{/if}}
+
+          {{!-- EFFECT (root) --}}
+          {{#if (eq node.type "effect")}}
+            <fieldset class="v-group">
+              <legend>Effect</legend>
+              <p>This part of the Sequencer allows you to easily play visual effects on the canvas, such as animated .gifs, .webms, and other static images as moving effects and projectiles.</p>
+              <h3 style="color:white;"><span>How do I use this?</span></h3>
+              <p>When creating an effect section, you can assemble these methods like this:</p>
+              <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js">
+<span style="color:#89ddff;">Start / Sequence</span>
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">effect</span> configure the file (example <span style="color:#ffcb6b">"modules/jb2a_patreon/Library/Generic/Healing/HealingAbility_01_Blue_200x200.webm"</span> or <span style="color:#ffcb6b">"jb2a.fire_bolt.orange"</span>)
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">atLocation</span> (example <span style="color:#ffcb6b">token selected</span>)
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">fadeIn</span> (example <span style="color:#ffcb6b">duration: 500, ease: easeOutQuint</span>)
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">fadeOut</span> (example <span style="color:#ffcb6b">duration: 250, ease: easeOutCirc</span>)
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">play</span></code></pre>
+              <div class="v-field">
+                <label>Base folder
+                  <input type="text" data-config="baseFolder" value="{{node.config.baseFolder}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>File
+                  <input type="text" data-config="file" value="{{node.config.file}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- AT LOCATION (child) --}}
+{{#if (eq node.type "atLocation")}}
+  <fieldset class="v-group">
+    <legend>At Location</legend>
+
+    <div class="v-field">
+      <label>Modo
+        <select data-config="mode">
+          <option value="selected-token"  {{#if (eq node.config.mode "selected-token")}}selected{{/if}}>
+            Token selected
+          </option>
+          <option value="selected-target" {{#if (eq node.config.mode "selected-target")}}selected{{/if}}>
+            Token target
+          </option>
+          <option value="token-id"        {{#if (eq node.config.mode "token-id")}}selected{{/if}}>
+            Token ID
+          </option>
+          <option value="token-name"      {{#if (eq node.config.mode "token-name")}}selected{{/if}}>
+            Token by name
+          </option>
+          <option value="tile-id"         {{#if (eq node.config.mode "tile-id")}}selected{{/if}}>
+            Tile by ID
+          </option>
+          <option value="point"           {{#if (eq node.config.mode "point")}}selected{{/if}}>
+             Point (x,y)
+          </option>
+        </select>
+      </label>
+    </div>
+
+    <div class="v-field">
+      <label>Token ID
+        <input type="text"
+               data-config="tokenId"
+               value="{{node.config.tokenId}}">
+      </label>
+    </div>
+
+    <div class="v-field">
+      <label>Token name
+        <input type="text"
+               data-config="tokenName"
+               value="{{node.config.tokenName}}">
+      </label>
+    </div>
+
+    <div class="v-field">
+      <label>Tile ID
+        <input type="text"
+               data-config="tileId"
+               value="{{node.config.tileId}}">
+      </label>
+    </div>
+
+    <div class="v-field">
+      <label>X
+        <input type="number"
+               data-config="x"
+               data-type="number"
+               value="{{node.config.x}}">
+      </label>
+    </div>
+
+    <div class="v-field">
+      <label>Y
+        <input type="number"
+               data-config="y"
+               data-type="number"
+               value="{{node.config.y}}">
+      </label>
+    </div>
+
+    <hr>
+
+    <div class="v-field">
+      <label>Random offset
+        <input type="number"
+               data-config="randomOffset"
+               data-type="number"
+               value="{{node.config.randomOffset}}">
+      </label>
+    </div>
+
+    <div class="v-field">
+      <label>Offset X
+        <input type="number"
+               data-config="offsetX"
+               data-type="number"
+               value="{{node.config.offsetX}}">
+      </label>
+    </div>
+
+    <div class="v-field">
+      <label>Offset Y
+        <input type="number"
+               data-config="offsetY"
+               data-type="number"
+               value="{{node.config.offsetY}}">
+      </label>
+    </div>
+
+    <div class="v-field">
+      <label>
+        <input type="checkbox"
+               data-config="cacheLocation"
+               data-type="boolean"
+               {{#if node.config.cacheLocation}}checked{{/if}}>
+        cacheLocation
+      </label>
+    </div>
+
+    <div class="v-field">
+      <label>
+        <input type="checkbox"
+               data-config="local"
+               data-type="boolean"
+               {{#if node.config.local}}checked{{/if}}>
+        local
+      </label>
+    </div>
+
+    <div class="v-field">
+      <label>
+        <input type="checkbox"
+               data-config="gridUnits"
+               data-type="boolean"
+               {{#if node.config.gridUnits}}checked{{/if}}>
+        gridUnits
+      </label>
+    </div>
+  </fieldset>
+{{/if}}
+
+
+          {{!-- WAIT UNTIL FINISHED (child) --}}
+          {{#if (eq node.type "waitUntilFinished")}}
+            <fieldset class="v-group">
+              <legend>Wait Until Finished</legend>
+              <p>Calling this method will cause the effect to finish running before starting the next section.</p>
+              <p>Passing a number as a parameter will cause the effect to wait for the given number (in ms) after finishing playing before continuing to the next section.</p>
+              <p>If given a negative number, the Sequencer will continue to the next section early but continue playing the effect.</p>
+              <p>Passing a second number will randomize the wait duration between the two given numbers.</p>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ASYNC (child) --}}
+          {{#if (eq node.type "async")}}
+            <fieldset class="v-group">
+              <legend>Async</legend>
+              <p><code>.async()</code></p>
+              <p>Calling this will make each part of the effect finish playing before the next one starts playing.</p>
+              <p>This differs from <code>.waitUntilFinished()</code> in the sense that <code>.async()</code> is for each repetition (see <code>.repeats()</code> below), whilst <code>.waitUntilFinished()</code> is for the entire effect.</p>
+            </fieldset>
+          {{/if}}
+
+          {{!-- REPEATS (child) --}}
+          {{#if (eq node.type "repeats")}}
+            <fieldset class="v-group">
+              <legend>Repeats</legend>
+              <p><code>.repeats(inRepetitions, inRepeatDelayMin, inRepeatDelayMax)</code></p>
+              <p>Causes the effect to be repeated <code>inRepetitions</code> times, with an optional delay.</p>
+              <p>As an option, you can give it <code>inRepeatDelayMin</code> for a static delay between repetitions, or <code>inRepeatDelayMin</code> and <code>inRepeatDelayMax</code> for a random delay between each call.</p>
+              <p>It is highly recommended that you do not load too many files at the same time, as Foundry might not be able to load all of them.</p>
+              <div class="v-field">
+                <label>Repetitions
+                  <input type="number"
+                         min="1"
+                         data-config="repeats"
+                         data-type="number"
+                         value="{{node.config.repeats}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label><code>inRepeatDelayMin</code> (ms)
+                  <input type="number"
+                         data-config="repeatDelayMin"
+                         data-type="number"
+                         value="{{node.config.repeatDelayMin}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label><code>inRepeatDelayMax</code>
+                  <input type="number"
+                         data-config="repeatDelayMax"
+                         data-type="number"
+                         value="{{node.config.repeatDelayMax}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- DELAY (child) --}}
+          {{#if (eq node.type "delay")}}
+            <fieldset class="v-group">
+              <legend>Delay</legend>
+              <p><code>.delay(1000)</code> or <code>.delay(500, 1000)</code></p>
+              <p>This will delay the effect from being played for a set amount of milliseconds. If given a second number, a random delay between the two numbers will be generated.</p>
+
+              <div class="v-field">
+                <label>Minimum delay (ms)
+                  <input type="number"
+                         data-config="delayMin"
+                         data-type="number"
+                         value="{{node.config.delayMin}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Maximum delay (ms)
+                  <input type="number"
+                         data-config="delayMax"
+                         data-type="number"
+                         value="{{node.config.delayMax}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- OPACITY (child) --}}
+          {{#if (eq node.type "opacity")}}
+            <fieldset class="v-group">
+              <legend>Opacity</legend>
+              <p><code>.opacity(0.5)</code></p>
+              <p>Sets the opacity of the effect. If used with <code>.fadeIn()</code> and/or <code>.fadeOut()</code>, this defines what it will fade to/from.</p>
+
+              <div class="v-field">
+                <label>Opacity (0–1)
+                  <input type="number"
+                         step="0.05" min="0" max="1"
+                         data-config="opacity"
+                         data-type="number"
+                         value="{{node.config.opacity}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- DURATION (child) --}}
+          {{#if (eq node.type "duration")}}
+            <fieldset class="v-group">
+              <legend>Duration</legend>
+              <p>Sets the duration of the effect. If the duration is longer than the effect’s original duration, it will loop.</p>
+
+              <div class="v-field">
+                <label>Duration (ms)
+                  <input type="number"
+                         data-config="duration"
+                         data-type="number"
+                         value="{{node.config.duration}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ON (child) --}}
+          {{#if (eq node.type "on")}}
+            <fieldset class="v-group">
+              <legend>On (Target)</legend>
+              <p><code>.on(inToken)</code> or <code>.on(inTile)</code></p>
+              <p>Sets the target object to be animated. Accepts a token or a tile.</p>
+
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="inToken"  {{#if (eq node.config.mode "inToken")}}selected{{/if}}>inToken</option>
+                    <option value="inTile"   {{#if (eq node.config.mode "inTile")}}selected{{/if}}>inTile</option>
+                    <option value="token-id" {{#if (eq node.config.mode "token-id")}}selected{{/if}}>Token ID</option>
+                    <option value="tile-id"  {{#if (eq node.config.mode "tile-id")}}selected{{/if}}>Tile ID</option>
+                    <option value="point"    {{#if (eq node.config.mode "point")}}selected{{/if}}> Point (x,y)</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Token ID
+                  <input type="text"
+                         data-config="tokenId"
+                         value="{{node.config.tokenId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Tile ID
+                  <input type="text"
+                         data-config="tileId"
+                         value="{{node.config.tileId}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- MOVE TOWARDS (child) --}}
+          {{#if (eq node.type "moveTowards")}}
+            <fieldset class="v-group">
+              <legend>Move Towards</legend>
+              <p><code>.moveTowards(inToken)</code> or <code>.moveTowards(inTile)</code> or <code>.moveTowards({ x: 0, y: 0 })</code></p>
+              <p>Sets the location to move the target object to over the course of the duration.</p>
+              <p>If no duration has been set, the target object will move towards the location at the default foundry speed.</p>
+              <p>A second options parameter can set the ease of the movement, the delay before it starts, and whether the object should be centered on the given location.</p>
+              <p><strong>Note:</strong> The <code>ease</code> parameter <em>not</em> supported for tokens due to Foundry removing support for it.</p>
+              <p>Default parameters: <code>{ ease: "linear", delay: 0, relativeToCenter: false }</code></p>
+              <p>Check out what easings are available here: <a href="https://easings.net/" target="_blank" rel="noopener">https://easings.net/</a></p>
+
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="inToken"  {{#if (eq node.config.mode "inToken")}}selected{{/if}}>inToken</option>
+                    <option value="inTile"   {{#if (eq node.config.mode "inTile")}}selected{{/if}}>inTile</option>
+                    <option value="token-id" {{#if (eq node.config.mode "token-id")}}selected{{/if}}>Token ID</option>
+                    <option value="tile-id"  {{#if (eq node.config.mode "tile-id")}}selected{{/if}}>Tile ID</option>
+                    <option value="point"    {{#if (eq node.config.mode "point")}}selected{{/if}}> Point (x,y)</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Token ID
+                  <input type="text"
+                         data-config="tokenId"
+                         value="{{node.config.tokenId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Tile ID
+                  <input type="text"
+                         data-config="tileId"
+                         value="{{node.config.tileId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>X
+                  <input type="number"
+                         data-config="x"
+                         data-type="number"
+                         value="{{node.config.x}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Y
+                  <input type="number"
+                         data-config="y"
+                         data-type="number"
+                         value="{{node.config.y}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Ease<select data-config="ease">
+                    <option value="linear"           {{#if (eq node.config.ease "linear")}}selected{{/if}}>linear</option>
+                    <option value="easeInSine"       {{#if (eq node.config.ease "easeInSine")}}selected{{/if}}>easeInSine</option>
+                    <option value="easeOutSine"      {{#if (eq node.config.ease "easeOutSine")}}selected{{/if}}>easeOutSine</option>
+                    <option value="easeInOutSine"    {{#if (eq node.config.ease "easeInOutSine")}}selected{{/if}}>easeInOutSine</option>
+                    <option value="easeInQuad"       {{#if (eq node.config.ease "easeInQuad")}}selected{{/if}}>easeInQuad</option>
+                    <option value="easeOutQuad"      {{#if (eq node.config.ease "easeOutQuad")}}selected{{/if}}>easeOutQuad</option>
+                    <option value="easeInOutQuad"    {{#if (eq node.config.ease "easeInOutQuad")}}selected{{/if}}>easeInOutQuad</option>
+                    <option value="easeInCubic"      {{#if (eq node.config.ease "easeInCubic")}}selected{{/if}}>easeInCubic</option>
+                    <option value="easeOutCubic"     {{#if (eq node.config.ease "easeOutCubic")}}selected{{/if}}>easeOutCubic</option>
+                    <option value="easeInOutCubic"   {{#if (eq node.config.ease "easeInOutCubic")}}selected{{/if}}>easeInOutCubic</option>
+                    <option value="easeInQuart"      {{#if (eq node.config.ease "easeInQuart")}}selected{{/if}}>easeInQuart</option>
+                    <option value="easeOutQuart"     {{#if (eq node.config.ease "easeOutQuart")}}selected{{/if}}>easeOutQuart</option>
+                    <option value="easeInOutQuart"   {{#if (eq node.config.ease "easeInOutQuart")}}selected{{/if}}>easeInOutQuart</option>
+                    <option value="easeInQuint"      {{#if (eq node.config.ease "easeInQuint")}}selected{{/if}}>easeInQuint</option>
+                    <option value="easeOutQuint"     {{#if (eq node.config.ease "easeOutQuint")}}selected{{/if}}>easeOutQuint</option>
+                    <option value="easeInOutQuint"   {{#if (eq node.config.ease "easeInOutQuint")}}selected{{/if}}>easeInOutQuint</option>
+                    <option value="easeInExpo"       {{#if (eq node.config.ease "easeInExpo")}}selected{{/if}}>easeInExpo</option>
+                    <option value="easeOutExpo"      {{#if (eq node.config.ease "easeOutExpo")}}selected{{/if}}>easeOutExpo</option>
+                    <option value="easeInOutExpo"    {{#if (eq node.config.ease "easeInOutExpo")}}selected{{/if}}>easeInOutExpo</option>
+                    <option value="easeInCirc"       {{#if (eq node.config.ease "easeInCirc")}}selected{{/if}}>easeInCirc</option>
+                    <option value="easeOutCirc"      {{#if (eq node.config.ease "easeOutCirc")}}selected{{/if}}>easeOutCirc</option>
+                    <option value="easeInOutCirc"    {{#if (eq node.config.ease "easeInOutCirc")}}selected{{/if}}>easeInOutCirc</option>
+                    <option value="easeInBack"       {{#if (eq node.config.ease "easeInBack")}}selected{{/if}}>easeInBack</option>
+                    <option value="easeOutBack"      {{#if (eq node.config.ease "easeOutBack")}}selected{{/if}}>easeOutBack</option>
+                    <option value="easeInOutBack"    {{#if (eq node.config.ease "easeInOutBack")}}selected{{/if}}>easeInOutBack</option>
+                    <option value="easeInElastic"    {{#if (eq node.config.ease "easeInElastic")}}selected{{/if}}>easeInElastic</option>
+                    <option value="easeOutElastic"   {{#if (eq node.config.ease "easeOutElastic")}}selected{{/if}}>easeOutElastic</option>
+                    <option value="easeInOutElastic" {{#if (eq node.config.ease "easeInOutElastic")}}selected{{/if}}>easeInOutElastic</option>
+                    <option value="easeInBounce"     {{#if (eq node.config.ease "easeInBounce")}}selected{{/if}}>easeInBounce</option>
+                    <option value="easeOutBounce"    {{#if (eq node.config.ease "easeOutBounce")}}selected{{/if}}>easeOutBounce</option>
+                    <option value="easeInOutBounce"  {{#if (eq node.config.ease "easeInOutBounce")}}selected{{/if}}>easeInOutBounce</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Delay (ms)
+                  <input type="number"
+                         data-config="delay"
+                         data-type="number"
+                         value="{{node.config.delay}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>
+                  <input type="checkbox"
+                         data-config="relativeToCenter"
+                         data-type="boolean"
+                         {{#if node.config.relativeToCenter}}checked{{/if}}>
+                  relativeToCenter
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- MOVE SPEED (child) --}}
+          {{#if (eq node.type "moveSpeed")}}
+            <fieldset class="v-group">
+              <legend>Move Speed</legend>
+
+              <div class="v-field">
+                <label>moveSpeed
+                  <input type="number"
+                         data-config="moveSpeed"
+                         data-type="number"
+                         value="{{node.config.moveSpeed}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ROTATE TOWARDS (child) --}}
+          {{#if (eq node.type "rotateTowards")}}
+            <fieldset class="v-group">
+              <legend>Rotate Towards</legend>
+
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="inToken"  {{#if (eq node.config.mode "inToken")}}selected{{/if}}>inToken</option>
+                    <option value="inTile"   {{#if (eq node.config.mode "inTile")}}selected{{/if}}>inTile</option>
+                    <option value="token-id" {{#if (eq node.config.mode "token-id")}}selected{{/if}}>Token ID</option>
+                    <option value="tile-id"  {{#if (eq node.config.mode "tile-id")}}selected{{/if}}>Tile ID</option>
+                    <option value="point"    {{#if (eq node.config.mode "point")}}selected{{/if}}> Point (x,y)</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Token ID
+                  <input type="text"
+                         data-config="tokenId"
+                         value="{{node.config.tokenId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Tile ID
+                  <input type="text"
+                         data-config="tileId"
+                         value="{{node.config.tileId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>X
+                  <input type="number"
+                         data-config="x"
+                         data-type="number"
+                         value="{{node.config.x}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Y
+                  <input type="number"
+                         data-config="y"
+                         data-type="number"
+                         value="{{node.config.y}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Duration (ms)
+                  <input type="number"
+                         data-config="duration"
+                         data-type="number"
+                         value="{{node.config.duration}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Ease<select data-config="ease">
+                    <option value="linear"           {{#if (eq node.config.ease "linear")}}selected{{/if}}>linear</option>
+                    <option value="easeInSine"       {{#if (eq node.config.ease "easeInSine")}}selected{{/if}}>easeInSine</option>
+                    <option value="easeOutSine"      {{#if (eq node.config.ease "easeOutSine")}}selected{{/if}}>easeOutSine</option>
+                    <option value="easeInOutSine"    {{#if (eq node.config.ease "easeInOutSine")}}selected{{/if}}>easeInOutSine</option>
+                    <option value="easeInQuad"       {{#if (eq node.config.ease "easeInQuad")}}selected{{/if}}>easeInQuad</option>
+                    <option value="easeOutQuad"      {{#if (eq node.config.ease "easeOutQuad")}}selected{{/if}}>easeOutQuad</option>
+                    <option value="easeInOutQuad"    {{#if (eq node.config.ease "easeInOutQuad")}}selected{{/if}}>easeInOutQuad</option>
+                    <option value="easeInCubic"      {{#if (eq node.config.ease "easeInCubic")}}selected{{/if}}>easeInCubic</option>
+                    <option value="easeOutCubic"     {{#if (eq node.config.ease "easeOutCubic")}}selected{{/if}}>easeOutCubic</option>
+                    <option value="easeInOutCubic"   {{#if (eq node.config.ease "easeInOutCubic")}}selected{{/if}}>easeInOutCubic</option>
+                    <option value="easeInQuart"      {{#if (eq node.config.ease "easeInQuart")}}selected{{/if}}>easeInQuart</option>
+                    <option value="easeOutQuart"     {{#if (eq node.config.ease "easeOutQuart")}}selected{{/if}}>easeOutQuart</option>
+                    <option value="easeInOutQuart"   {{#if (eq node.config.ease "easeInOutQuart")}}selected{{/if}}>easeInOutQuart</option>
+                    <option value="easeInQuint"      {{#if (eq node.config.ease "easeInQuint")}}selected{{/if}}>easeInQuint</option>
+                    <option value="easeOutQuint"     {{#if (eq node.config.ease "easeOutQuint")}}selected{{/if}}>easeOutQuint</option>
+                    <option value="easeInOutQuint"   {{#if (eq node.config.ease "easeInOutQuint")}}selected{{/if}}>easeInOutQuint</option>
+                    <option value="easeInExpo"       {{#if (eq node.config.ease "easeInExpo")}}selected{{/if}}>easeInExpo</option>
+                    <option value="easeOutExpo"      {{#if (eq node.config.ease "easeOutExpo")}}selected{{/if}}>easeOutExpo</option>
+                    <option value="easeInOutExpo"    {{#if (eq node.config.ease "easeInOutExpo")}}selected{{/if}}>easeInOutExpo</option>
+                    <option value="easeInCirc"       {{#if (eq node.config.ease "easeInCirc")}}selected{{/if}}>easeInCirc</option>
+                    <option value="easeOutCirc"      {{#if (eq node.config.ease "easeOutCirc")}}selected{{/if}}>easeOutCirc</option>
+                    <option value="easeInOutCirc"    {{#if (eq node.config.ease "easeInOutCirc")}}selected{{/if}}>easeInOutCirc</option>
+                    <option value="easeInBack"       {{#if (eq node.config.ease "easeInBack")}}selected{{/if}}>easeInBack</option>
+                    <option value="easeOutBack"      {{#if (eq node.config.ease "easeOutBack")}}selected{{/if}}>easeOutBack</option>
+                    <option value="easeInOutBack"    {{#if (eq node.config.ease "easeInOutBack")}}selected{{/if}}>easeInOutBack</option>
+                    <option value="easeInElastic"    {{#if (eq node.config.ease "easeInElastic")}}selected{{/if}}>easeInElastic</option>
+                    <option value="easeOutElastic"   {{#if (eq node.config.ease "easeOutElastic")}}selected{{/if}}>easeOutElastic</option>
+                    <option value="easeInOutElastic" {{#if (eq node.config.ease "easeInOutElastic")}}selected{{/if}}>easeInOutElastic</option>
+                    <option value="easeInBounce"     {{#if (eq node.config.ease "easeInBounce")}}selected{{/if}}>easeInBounce</option>
+                    <option value="easeOutBounce"    {{#if (eq node.config.ease "easeOutBounce")}}selected{{/if}}>easeOutBounce</option>
+                    <option value="easeInOutBounce"  {{#if (eq node.config.ease "easeInOutBounce")}}selected{{/if}}>easeInOutBounce</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Delay (ms)
+                  <input type="number"
+                         data-config="delay"
+                         data-type="number"
+                         value="{{node.config.delay}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>rotationOffset (º)
+                  <input type="number"
+                         data-config="rotationOffset"
+                         data-type="number"
+                         value="{{node.config.rotationOffset}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>
+                  <input type="checkbox"
+                         data-config="towardsCenter"
+                         data-type="boolean"
+                         {{#if node.config.towardsCenter}}checked{{/if}}>
+                  towardsCenter
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>
+                  <input type="checkbox"
+                         data-config="cacheLocation"
+                         data-type="boolean"
+                         {{#if node.config.cacheLocation}}checked{{/if}}>
+                  cacheLocation
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- TELEPORT TO (child) --}}
+          {{#if (eq node.type "teleportTo")}}
+            <fieldset class="v-group">
+              <legend>Teleport To</legend>
+
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="inToken"  {{#if (eq node.config.mode "inToken")}}selected{{/if}}>inToken</option>
+                    <option value="inTile"   {{#if (eq node.config.mode "inTile")}}selected{{/if}}>inTile</option>
+                    <option value="token-id" {{#if (eq node.config.mode "token-id")}}selected{{/if}}>Token ID</option>
+                    <option value="tile-id"  {{#if (eq node.config.mode "tile-id")}}selected{{/if}}>Tile ID</option>
+                    <option value="point"    {{#if (eq node.config.mode "point")}}selected{{/if}}> Point (x,y)</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Token ID
+                  <input type="text"
+                         data-config="tokenId"
+                         value="{{node.config.tokenId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Tile ID
+                  <input type="text"
+                         data-config="tileId"
+                         value="{{node.config.tileId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>X
+                  <input type="number"
+                         data-config="x"
+                         data-type="number"
+                         value="{{node.config.x}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Y
+                  <input type="number"
+                         data-config="y"
+                         data-type="number"
+                         value="{{node.config.y}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Delay (ms)
+                  <input type="number"
+                         data-config="delay"
+                         data-type="number"
+                         value="{{node.config.delay}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>
+                  <input type="checkbox"
+                         data-config="relativeToCenter"
+                         data-type="boolean"
+                         {{#if node.config.relativeToCenter}}checked{{/if}}>
+                  relativeToCenter
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- OFFSET (child) --}}
+          {{#if (eq node.type "offset")}}
+            <fieldset class="v-group">
+              <legend>Offset</legend>
+
+              <div class="v-field">
+                <label>Offset X
+                  <input type="number"
+                         data-config="x"
+                         data-type="number"
+                         value="{{node.config.x}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Offset Y
+                  <input type="number"
+                         data-config="y"
+                         data-type="number"
+                         value="{{node.config.y}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CLOSEST SQUARE (child) --}}
+          {{#if (eq node.type "closestSquare")}}
+            <fieldset class="v-group">
+              <legend>Closest Square</legend>
+              <p>Aplica <code>.closestSquare()</code> al target.</p>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SNAP TO GRID (child) --}}
+          {{#if (eq node.type "snapToGrid")}}
+            <fieldset class="v-group">
+              <legend>Snap To Grid</legend>
+              <p>Aplica <code>.snapToGrid()</code> al target.</p>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ROTATE (child) --}}
+          {{#if (eq node.type "rotate")}}
+            <fieldset class="v-group">
+              <legend>Rotate</legend>
+
+              <div class="v-field">
+                <label>Rotate (º)
+                  <input type="number"
+                         data-config="rotate"
+                         data-type="number"
+                         value="{{node.config.rotate}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ROTATE IN (child) --}}
+          {{#if (eq node.type "rotateIn")}}
+            <fieldset class="v-group">
+              <legend>Rotate In</legend>
+
+              <div class="v-field">
+                <label>Grados
+                  <input type="number"
+                         data-config="degrees"
+                         data-type="number"
+                         value="{{node.config.degrees}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Duration (ms)
+                  <input type="number"
+                         data-config="duration"
+                         data-type="number"
+                         value="{{node.config.duration}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Ease<select data-config="ease">
+                    <option value="linear"           {{#if (eq node.config.ease "linear")}}selected{{/if}}>linear</option>
+                    <option value="easeInSine"       {{#if (eq node.config.ease "easeInSine")}}selected{{/if}}>easeInSine</option>
+                    <option value="easeOutSine"      {{#if (eq node.config.ease "easeOutSine")}}selected{{/if}}>easeOutSine</option>
+                    <option value="easeInOutSine"    {{#if (eq node.config.ease "easeInOutSine")}}selected{{/if}}>easeInOutSine</option>
+                    <option value="easeInQuad"       {{#if (eq node.config.ease "easeInQuad")}}selected{{/if}}>easeInQuad</option>
+                    <option value="easeOutQuad"      {{#if (eq node.config.ease "easeOutQuad")}}selected{{/if}}>easeOutQuad</option>
+                    <option value="easeInOutQuad"    {{#if (eq node.config.ease "easeInOutQuad")}}selected{{/if}}>easeInOutQuad</option>
+                    <option value="easeInCubic"      {{#if (eq node.config.ease "easeInCubic")}}selected{{/if}}>easeInCubic</option>
+                    <option value="easeOutCubic"     {{#if (eq node.config.ease "easeOutCubic")}}selected{{/if}}>easeOutCubic</option>
+                    <option value="easeInOutCubic"   {{#if (eq node.config.ease "easeInOutCubic")}}selected{{/if}}>easeInOutCubic</option>
+                    <option value="easeInQuart"      {{#if (eq node.config.ease "easeInQuart")}}selected{{/if}}>easeInQuart</option>
+                    <option value="easeOutQuart"     {{#if (eq node.config.ease "easeOutQuart")}}selected{{/if}}>easeOutQuart</option>
+                    <option value="easeInOutQuart"   {{#if (eq node.config.ease "easeInOutQuart")}}selected{{/if}}>easeInOutQuart</option>
+                    <option value="easeInQuint"      {{#if (eq node.config.ease "easeInQuint")}}selected{{/if}}>easeInQuint</option>
+                    <option value="easeOutQuint"     {{#if (eq node.config.ease "easeOutQuint")}}selected{{/if}}>easeOutQuint</option>
+                    <option value="easeInOutQuint"   {{#if (eq node.config.ease "easeInOutQuint")}}selected{{/if}}>easeInOutQuint</option>
+                    <option value="easeInExpo"       {{#if (eq node.config.ease "easeInExpo")}}selected{{/if}}>easeInExpo</option>
+                    <option value="easeOutExpo"      {{#if (eq node.config.ease "easeOutExpo")}}selected{{/if}}>easeOutExpo</option>
+                    <option value="easeInOutExpo"    {{#if (eq node.config.ease "easeInOutExpo")}}selected{{/if}}>easeInOutExpo</option>
+                    <option value="easeInCirc"       {{#if (eq node.config.ease "easeInCirc")}}selected{{/if}}>easeInCirc</option>
+                    <option value="easeOutCirc"      {{#if (eq node.config.ease "easeOutCirc")}}selected{{/if}}>easeOutCirc</option>
+                    <option value="easeInOutCirc"    {{#if (eq node.config.ease "easeInOutCirc")}}selected{{/if}}>easeInOutCirc</option>
+                    <option value="easeInBack"       {{#if (eq node.config.ease "easeInBack")}}selected{{/if}}>easeInBack</option>
+                    <option value="easeOutBack"      {{#if (eq node.config.ease "easeOutBack")}}selected{{/if}}>easeOutBack</option>
+                    <option value="easeInOutBack"    {{#if (eq node.config.ease "easeInOutBack")}}selected{{/if}}>easeInOutBack</option>
+                    <option value="easeInElastic"    {{#if (eq node.config.ease "easeInElastic")}}selected{{/if}}>easeInElastic</option>
+                    <option value="easeOutElastic"   {{#if (eq node.config.ease "easeOutElastic")}}selected{{/if}}>easeOutElastic</option>
+                    <option value="easeInOutElastic" {{#if (eq node.config.ease "easeInOutElastic")}}selected{{/if}}>easeInOutElastic</option>
+                    <option value="easeInBounce"     {{#if (eq node.config.ease "easeInBounce")}}selected{{/if}}>easeInBounce</option>
+                    <option value="easeOutBounce"    {{#if (eq node.config.ease "easeOutBounce")}}selected{{/if}}>easeOutBounce</option>
+                    <option value="easeInOutBounce"  {{#if (eq node.config.ease "easeInOutBounce")}}selected{{/if}}>easeInOutBounce</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Delay (ms)
+                  <input type="number"
+                         data-config="delay"
+                         data-type="number"
+                         value="{{node.config.delay}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ROTATE OUT (child) --}}
+          {{#if (eq node.type "rotateOut")}}
+            <fieldset class="v-group">
+              <legend>Rotate Out</legend>
+
+              <div class="v-field">
+                <label>Grados
+                  <input type="number"
+                         data-config="degrees"
+                         data-type="number"
+                         value="{{node.config.degrees}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Duration (ms)
+                  <input type="number"
+                         data-config="duration"
+                         data-type="number"
+                         value="{{node.config.duration}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Ease<select data-config="ease">
+                    <option value="linear"           {{#if (eq node.config.ease "linear")}}selected{{/if}}>linear</option>
+                    <option value="easeInSine"       {{#if (eq node.config.ease "easeInSine")}}selected{{/if}}>easeInSine</option>
+                    <option value="easeOutSine"      {{#if (eq node.config.ease "easeOutSine")}}selected{{/if}}>easeOutSine</option>
+                    <option value="easeInOutSine"    {{#if (eq node.config.ease "easeInOutSine")}}selected{{/if}}>easeInOutSine</option>
+                    <option value="easeInQuad"       {{#if (eq node.config.ease "easeInQuad")}}selected{{/if}}>easeInQuad</option>
+                    <option value="easeOutQuad"      {{#if (eq node.config.ease "easeOutQuad")}}selected{{/if}}>easeOutQuad</option>
+                    <option value="easeInOutQuad"    {{#if (eq node.config.ease "easeInOutQuad")}}selected{{/if}}>easeInOutQuad</option>
+                    <option value="easeInCubic"      {{#if (eq node.config.ease "easeInCubic")}}selected{{/if}}>easeInCubic</option>
+                    <option value="easeOutCubic"     {{#if (eq node.config.ease "easeOutCubic")}}selected{{/if}}>easeOutCubic</option>
+                    <option value="easeInOutCubic"   {{#if (eq node.config.ease "easeInOutCubic")}}selected{{/if}}>easeInOutCubic</option>
+                    <option value="easeInQuart"      {{#if (eq node.config.ease "easeInQuart")}}selected{{/if}}>easeInQuart</option>
+                    <option value="easeOutQuart"     {{#if (eq node.config.ease "easeOutQuart")}}selected{{/if}}>easeOutQuart</option>
+                    <option value="easeInOutQuart"   {{#if (eq node.config.ease "easeInOutQuart")}}selected{{/if}}>easeInOutQuart</option>
+                    <option value="easeInQuint"      {{#if (eq node.config.ease "easeInQuint")}}selected{{/if}}>easeInQuint</option>
+                    <option value="easeOutQuint"     {{#if (eq node.config.ease "easeOutQuint")}}selected{{/if}}>easeOutQuint</option>
+                    <option value="easeInOutQuint"   {{#if (eq node.config.ease "easeInOutQuint")}}selected{{/if}}>easeInOutQuint</option>
+                    <option value="easeInExpo"       {{#if (eq node.config.ease "easeInExpo")}}selected{{/if}}>easeInExpo</option>
+                    <option value="easeOutExpo"      {{#if (eq node.config.ease "easeOutExpo")}}selected{{/if}}>easeOutExpo</option>
+                    <option value="easeInOutExpo"    {{#if (eq node.config.ease "easeInOutExpo")}}selected{{/if}}>easeInOutExpo</option>
+                    <option value="easeInCirc"       {{#if (eq node.config.ease "easeInCirc")}}selected{{/if}}>easeInCirc</option>
+                    <option value="easeOutCirc"      {{#if (eq node.config.ease "easeOutCirc")}}selected{{/if}}>easeOutCirc</option>
+                    <option value="easeInOutCirc"    {{#if (eq node.config.ease "easeInOutCirc")}}selected{{/if}}>easeInOutCirc</option>
+                    <option value="easeInBack"       {{#if (eq node.config.ease "easeInBack")}}selected{{/if}}>easeInBack</option>
+                    <option value="easeOutBack"      {{#if (eq node.config.ease "easeOutBack")}}selected{{/if}}>easeOutBack</option>
+                    <option value="easeInOutBack"    {{#if (eq node.config.ease "easeInOutBack")}}selected{{/if}}>easeInOutBack</option>
+                    <option value="easeInElastic"    {{#if (eq node.config.ease "easeInElastic")}}selected{{/if}}>easeInElastic</option>
+                    <option value="easeOutElastic"   {{#if (eq node.config.ease "easeOutElastic")}}selected{{/if}}>easeOutElastic</option>
+                    <option value="easeInOutElastic" {{#if (eq node.config.ease "easeInOutElastic")}}selected{{/if}}>easeInOutElastic</option>
+                    <option value="easeInBounce"     {{#if (eq node.config.ease "easeInBounce")}}selected{{/if}}>easeInBounce</option>
+                    <option value="easeOutBounce"    {{#if (eq node.config.ease "easeOutBounce")}}selected{{/if}}>easeOutBounce</option>
+                    <option value="easeInOutBounce"  {{#if (eq node.config.ease "easeInOutBounce")}}selected{{/if}}>easeInOutBounce</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Delay (ms)
+                  <input type="number"
+                         data-config="delay"
+                         data-type="number"
+                         value="{{node.config.delay}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- TINT (child) --}}
+          {{#if (eq node.type "tint")}}
+            <fieldset class="v-group">
+              <legend>Tint</legend>
+
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="none"    {{#if (eq node.config.mode "none")}}selected{{/if}}>(ninguno)</option>
+                    <option value="reset"   {{#if (eq node.config.mode "reset")}}selected{{/if}}>reset</option>
+                    <option value="hex"     {{#if (eq node.config.mode "hex")}}selected{{/if}}>hex</option>
+                    <option value="decimal" {{#if (eq node.config.mode "decimal")}}selected{{/if}}>decimal</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Tint hex
+                  <input type="text"
+                         data-config="hex"
+                         value="{{node.config.hex}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Tint decimal
+                  <input type="number"
+                         data-config="dec"
+                         data-type="number"
+                         value="{{node.config.dec}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- HIDE (child) --}}
+          {{#if (eq node.type "hide")}}
+            <fieldset class="v-group">
+              <legend>Hide</legend>
+              <p>Este nodo aplica <code>.hide()</code> al target.</p>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SHOW (child) --}}
+          {{#if (eq node.type "show")}}
+            <fieldset class="v-group">
+              <legend>Show</legend>
+              <p>Este nodo aplica <code>.show()</code> al target.</p>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SOUND (root) --}}
+          {{#if (eq node.type "sound")}}
+            <fieldset class="v-group">
+              <legend>Sound</legend>
+              <div class="v-field">
+                <label>File
+                  <input type="text" data-config="file" value="{{node.config.file}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox"
+                         data-config="locally"
+                         data-type="boolean"
+                         {{#if node.config.locally}}checked{{/if}}>
+                  Sólo local
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ANIMATION (root, simplificada) --}}
+          {{#if (eq node.type "animation")}}
+            <fieldset class="v-group">
+              <legend>Animation</legend>
+              <p>This part of the Sequencer acts <strong>on</strong> objects in the scene, such as tokens, tiles, etc, and it can do things like moving tokens, teleporting them, hiding them, fading them out, etc.</p>
+              <h3 style="color:white;"><span>How do I use this?</span></a></h3>
+              <p>When creating an animation section, you can assemble these methods like this:</p>
+<pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js">new Sequence()
+    .animation()
+    .on()
+    .fadeIn(500)
+    .teleportTo({ x: 100, y: 0})
+.play()</code></pre>
+
+              <div class="v-field">
+                <label>Preset
+                  <input type="text"
+                         data-config="preset"
+                         value="{{node.config.preset}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SCROLLING TEXT (root) --}}
+          {{#if (eq node.type "scrollingText")}}
+            <div class="v-field">
+              <label>Texto
+                <input type="text" data-config="text" value="{{node.config.text}}">
+              </label>
+            </div>
+            <div class="v-field">
+              <label>Duration (ms)
+                <input type="number" data-config="durationMs" data-type="number" value="{{node.config.durationMs}}">
+              </label>
+            </div>
+          {{/if}}
+
+          {{!-- CANVAS PAN (root) --}}
+          {{#if (eq node.type "canvasPan")}}
+            <div class="v-field">
+              <label>Duration (ms)
+                <input type="number" data-config="durationMs" data-type="number" value="{{node.config.durationMs}}">
+              </label>
+            </div>
+            <div class="v-field">
+              <label>Scale
+                <input type="number" step="0.1" data-config="scale" data-type="number" value="{{node.config.scale}}">
+              </label>
+            </div>
+            <div class="v-field">
+              <label>Lock view (ms)
+                <input type="number" data-config="lockViewMs" data-type="number" value="{{node.config.lockViewMs}}">
+              </label>
+            </div>
+          {{/if}}
+
+          {{!-- CROSSHAIR (root) --}}
+          {{#if (eq node.type "crosshair")}}
+            <div class="v-field">
+              <label>Name
+                <input type="text" data-config="name" value="{{node.config.name}}">
+              </label>
+              <label>File
+                <input type="text" data-config="file" value="{{node.config.file}}">
+              </label>
+            </div>
+          {{/if}}
+
+          {{!-- WAIT (root) --}}
+          {{#if (eq node.type "wait")}}
+            <div class="v-field">
+              <label>Tiempo (ms)
+                <input type="number" data-config="ms" data-type="number" value="{{node.config.ms}}">
+              </label>
+            </div>
+          {{/if}}
+
+          {{!-- MACRO (root) --}}
+          {{#if (eq node.type "macro")}}
+            <div class="v-field">
+              <label>Nombre de Macro
+                <input type="text" data-config="macroName" value="{{node.config.macroName}}">
+              </label>
+            </div>
+          {{/if}}
+
+          {{!-- START TIME (child) --}}
+          {{#if (eq node.type "startTime")}}
+            <fieldset class="v-group">
+              <legend>Start Time</legend>
+
+              <div class="v-field">
+                <label>startTime (ms)
+                  <input type="number"
+                         data-config="startTime"
+                         data-type="number"
+                         value="{{node.config.startTime}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>startTimePerc (0–1)
+                  <input type="number"
+                         step="0.05" min="0" max="1"
+                         data-config="startTimePerc"
+                         data-type="number"
+                         value="{{node.config.startTimePerc}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- VOLUME (child) --}}
+          {{#if (eq node.type "volume")}}
+            <fieldset class="v-group">
+              <legend>Volume</legend>
+              <div class="v-field">
+                <label>Volume (0–1)
+                  <input type="number"
+                         step="0.05" min="0" max="1"
+                         data-config="volume"
+                         data-type="number"
+                         value="{{node.config.volume}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- PLAYIF (child) --}}
+          {{#if (eq node.type "playIf")}}
+            <fieldset class="v-group">
+              <legend>Play If</legend>
+
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="always"  {{#if (eq node.config.mode "always")}}selected{{/if}}>Siempre</option>
+                    <option value="boolean" {{#if (eq node.config.mode "boolean")}}selected{{/if}}>Booleano</option>
+                    <option value="chance"  {{#if (eq node.config.mode "chance")}}selected{{/if}}>Probabilidad</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>playIf bool
+                  <select data-config="bool">
+                    <option value="true"  {{#if node.config.bool}}selected{{/if}}>true</option>
+                    <option value="false" {{#unless node.config.bool}}selected{{/unless}}>false</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Probabilidad (0–1)
+                  <input type="number"
+                         step="0.05" min="0" max="1"
+                         data-config="chance"
+                         data-type="number"
+                         value="{{node.config.chance}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- FADE (Opacity) (child) --}}
+          {{#if (eq node.type "fade")}}
+            <fieldset class="v-group">
+              <legend>Fade (Opacity)</legend>
+
+              {{> v-fade-direction
+                  label="Fade In"
+                  durKey="fadeInDuration"
+                  easeKey="fadeInEase"
+                  delayKey="fadeInDelay"
+                  config=node.config}}
+
+              <hr>
+
+              {{> v-fade-direction
+                  label="Fade Out"
+                  durKey="fadeOutDuration"
+                  easeKey="fadeOutEase"
+                  delayKey="fadeOutDelay"
+                  config=node.config}}
+            </fieldset>
+          {{/if}}
+
+          {{!-- FADE AUDIO (child) --}}
+          {{#if (eq node.type "fadeAudio")}}
+            <fieldset class="v-group">
+              <legend>Fade (Audio)</legend>
+
+              {{> v-fade-direction
+                  label="Fade In audio"
+                  durKey="fadeInDuration"
+                  easeKey="fadeInEase"
+                  delayKey="fadeInDelay"
+                  config=node.config}}
+
+              <hr>
+
+              {{> v-fade-direction
+                  label="Fade Out audio"
+                  durKey="fadeOutDuration"
+                  easeKey="fadeOutEase"
+                  delayKey="fadeOutDelay"
+                  config=node.config}}
+            </fieldset>
+          {{/if}}
+
+          {{!-- LOOP OPTIONS (child) --}}
+          {{#if (eq node.type "loopOptions")}}
+            <fieldset class="v-group">
+              <legend>Loop Options</legend>
+
+              <div class="v-field">
+                <label>Loop delay (ms)
+                  <input type="number"
+                         data-config="loopDelay"
+                         data-type="number"
+                         value="{{node.config.loopDelay}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Max loops
+                  <input type="number"
+                         data-config="loopMaxLoops"
+                         data-type="number"
+                         value="{{node.config.loopMaxLoops}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>
+                  <input type="checkbox"
+                         data-config="loopEndOnLastLoop"
+                         data-type="boolean"
+                         {{#if node.config.loopEndOnLastLoop}}checked{{/if}}>
+                  endOnLastLoop
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+        </div>
+      </div>
+    {{/each}}
+  </section>
+</div>
