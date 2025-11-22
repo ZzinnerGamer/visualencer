@@ -1,5 +1,6 @@
 # **Visualencer – Visual Scripting for FoundryVTT Sequencer**
 
+
 **Visualencer** is a FoundryVTT module that introduces a **visual scripting environment** for the popular **Sequencer** module.
 Instead of manually writing JavaScript macros to create animations, sounds, effects and camera moves, Visualencer allows you to design them using a **node-based editor**, similar to Unreal Engine’s Blueprint system.
 
