@@ -1,7 +1,3 @@
-Sure! Here’s a polished, professional **GitHub README description** for your module **Visualencer**, written in clear English and structured like a modern open-source project page.
-
----
-
 # **Visualencer – Visual Scripting for FoundryVTT Sequencer**
 
 **Visualencer** is a FoundryVTT module that introduces a **visual scripting environment** for the popular **Sequencer** module.
