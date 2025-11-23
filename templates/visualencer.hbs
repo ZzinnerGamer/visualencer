@@ -1162,6 +1162,19 @@
             </fieldset>
           {{/if}}
 
+          {{!-- LOCALLY (child) --}}
+          {{#if (eq node.type "locally")}}
+            <fieldset class="v-group">
+              <legend>Locally</legend>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox" data-config="locally" data-type="boolean" {{#if node.config.locally}}checked{{/if}}>
+                  Play only locally
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
           {{!-- PLAYIF (child) --}}
           {{#if (eq node.type "playIf")}}
             <fieldset class="v-group">
@@ -1261,21 +1274,1082 @@
               <div class="v-field">
                 <label>Max loops
                   <input type="number"
-                         data-config="loopMaxLoops"
+                         data-config="maxLoops"
                          data-type="number"
-                         value="{{node.config.loopMaxLoops}}">
+                         value="{{node.config.maxLoops}}">
                 </label>
               </div>
 
               <div class="v-field">
                 <label>
                   <input type="checkbox"
-                         data-config="loopEndOnLastLoop"
+                         data-config="endOnLastLoop"
                          data-type="boolean"
-                         {{#if node.config.loopEndOnLastLoop}}checked{{/if}}>
+                         {{#if node.config.endOnLastLoop}}checked{{/if}}>
                   endOnLastLoop
                 </label>
               </div>
+
+              {{!-- FOR USERS (child) --}}
+          {{#if (eq node.type "forUsers")}}
+            <fieldset class="v-group">
+              <legend>For Users</legend>
+
+              <div class="v-field">
+                <label>User IDs / names (comma separated)
+                  <input type="text"
+                         data-config="users"
+                         value="{{node.config.users}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- COPY SPRITE (child) --}}
+          {{#if (eq node.type "copySprite")}}
+            <fieldset class="v-group">
+              <legend>Copy Sprite</legend>
+
+              <div class="v-field">
+                <label>Modo
+                  <select data-config="mode">
+                    <option value="selected-token" {{#if (eq node.config.mode "selected-token")}}selected{{/if}}>Token selected</option>
+                    <option value="selected-tile"  {{#if (eq node.config.mode "selected-tile")}}selected{{/if}}>Tile selected</option>
+                    <option value="token-id"       {{#if (eq node.config.mode "token-id")}}selected{{/if}}>Token ID</option>
+                    <option value="tile-id"        {{#if (eq node.config.mode "tile-id")}}selected{{/if}}>Tile ID</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Token ID
+                  <input type="text"
+                         data-config="tokenId"
+                         value="{{node.config.tokenId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Tile ID
+                  <input type="text"
+                         data-config="tileId"
+                         value="{{node.config.tileId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Random offset
+                  <input type="number"
+                         data-config="randomOffset"
+                         data-type="number"
+                         value="{{node.config.randomOffset}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Offset X
+                  <input type="number"
+                         data-config="offsetX"
+                         data-type="number"
+                         value="{{node.config.offsetX}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Offset Y
+                  <input type="number"
+                         data-config="offsetY"
+                         data-type="number"
+                         value="{{node.config.offsetY}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label><input type="checkbox" data-config="cacheLocation" data-type="boolean" {{#if node.config.cacheLocation}}checked{{/if}}> cacheLocation</label>
+              </div>
+
+              <div class="v-field">
+                <label><input type="checkbox" data-config="local" data-type="boolean" {{#if node.config.local}}checked{{/if}}> local</label>
+              </div>
+
+              <div class="v-field">
+                <label><input type="checkbox" data-config="gridUnits" data-type="boolean" {{#if node.config.gridUnits}}checked{{/if}}> gridUnits</label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ATTACH TO (child) --}}
+          {{#if (eq node.type "attachTo")}}
+            <fieldset class="v-group">
+              <legend>Attach To</legend>
+
+              <div class="v-field">
+                <label>Modo
+                  <select data-config="mode">
+                    <option value="selected-token" {{#if (eq node.config.mode "selected-token")}}selected{{/if}}>Token selected</option>
+                    <option value="template"       {{#if (eq node.config.mode "template")}}selected{{/if}}>Template</option>
+                    <option value="token-id"       {{#if (eq node.config.mode "token-id")}}selected{{/if}}>Token ID</option>
+                    <option value="token-name"     {{#if (eq node.config.mode "token-name")}}selected{{/if}}>Token name</option>
+                    <option value="name"           {{#if (eq node.config.mode "name")}}selected{{/if}}>Stored name</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Token ID
+                  <input type="text" data-config="tokenId" value="{{node.config.tokenId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Token name
+                  <input type="text" data-config="tokenName" value="{{node.config.tokenName}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Stored name
+                  <input type="text" data-config="storedName" value="{{node.config.storedName}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Align
+                  <select data-config="align">
+                    <option value="top-left"    {{#if (eq node.config.align "top-left")}}selected{{/if}}>top-left</option>
+                    <option value="top"         {{#if (eq node.config.align "top")}}selected{{/if}}>top</option>
+                    <option value="top-right"   {{#if (eq node.config.align "top-right")}}selected{{/if}}>top-right</option>
+                    <option value="left"        {{#if (eq node.config.align "left")}}selected{{/if}}>left</option>
+                    <option value="center"      {{#if (eq node.config.align "center")}}selected{{/if}}>center</option>
+                    <option value="right"       {{#if (eq node.config.align "right")}}selected{{/if}}>right</option>
+                    <option value="bottom-left" {{#if (eq node.config.align "bottom-left")}}selected{{/if}}>bottom-left</option>
+                    <option value="bottom"      {{#if (eq node.config.align "bottom")}}selected{{/if}}>bottom</option>
+                    <option value="bottom-right"{{#if (eq node.config.align "bottom-right")}}selected{{/if}}>bottom-right</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Edge
+                  <select data-config="edge">
+                    <option value="inner" {{#if (eq node.config.edge "inner")}}selected{{/if}}>inner</option>
+                    <option value="on"    {{#if (eq node.config.edge "on")}}selected{{/if}}>on</option>
+                    <option value="outer" {{#if (eq node.config.edge "outer")}}selected{{/if}}>outer</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Random offset
+                  <input type="number" data-config="randomOffset" data-type="number" value="{{node.config.randomOffset}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Offset X
+                  <input type="number" data-config="offsetX" data-type="number" value="{{node.config.offsetX}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Offset Y
+                  <input type="number" data-config="offsetY" data-type="number" value="{{node.config.offsetY}}">
+                </label>
+              </div>
+
+              <div class="v-field"><label><input type="checkbox" data-config="bindVisibility" data-type="boolean" {{#if node.config.bindVisibility}}checked{{/if}}> bindVisibility</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="bindAlpha" data-type="boolean" {{#if node.config.bindAlpha}}checked{{/if}}> bindAlpha</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="bindScale" data-type="boolean" {{#if node.config.bindScale}}checked{{/if}}> bindScale</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="bindRotation" data-type="boolean" {{#if node.config.bindRotation}}checked{{/if}}> bindRotation</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="local" data-type="boolean" {{#if node.config.local}}checked{{/if}}> local</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="gridUnits" data-type="boolean" {{#if node.config.gridUnits}}checked{{/if}}> gridUnits</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="template" data-type="boolean" {{#if node.config.template}}checked{{/if}}> template</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- STRETCH TO (child) --}}
+          {{#if (eq node.type "stretchTo")}}
+            <fieldset class="v-group">
+              <legend>Stretch To</legend>
+
+              <div class="v-field">
+                <label>Modo
+                  <select data-config="mode">
+                    <option value="selected-target" {{#if (eq node.config.mode "selected-target")}}selected{{/if}}>Token target</option>
+                    <option value="token-id"        {{#if (eq node.config.mode "token-id")}}selected{{/if}}>Token ID</option>
+                    <option value="tile-id"         {{#if (eq node.config.mode "tile-id")}}selected{{/if}}>Tile ID</option>
+                    <option value="point"           {{#if (eq node.config.mode "point")}}selected{{/if}}>Point (x,y)</option>
+                    <option value="name"            {{#if (eq node.config.mode "name")}}selected{{/if}}>Stored name</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Token ID
+                  <input type="text" data-config="tokenId" value="{{node.config.tokenId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Tile ID
+                  <input type="text" data-config="tileId" value="{{node.config.tileId}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>X
+                  <input type="number" data-config="x" data-type="number" value="{{node.config.x}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Y
+                  <input type="number" data-config="y" data-type="number" value="{{node.config.y}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Stored name
+                  <input type="text" data-config="storedName" value="{{node.config.storedName}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Random offset
+                  <input type="number" data-config="randomOffset" data-type="number" value="{{node.config.randomOffset}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Offset X
+                  <input type="number" data-config="offsetX" data-type="number" value="{{node.config.offsetX}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Offset Y
+                  <input type="number" data-config="offsetY" data-type="number" value="{{node.config.offsetY}}">
+                </label>
+              </div>
+
+              <div class="v-field"><label><input type="checkbox" data-config="cacheLocation" data-type="boolean" {{#if node.config.cacheLocation}}checked{{/if}}> cacheLocation</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="attachTo" data-type="boolean" {{#if node.config.attachTo}}checked{{/if}}> attachTo</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="onlyX" data-type="boolean" {{#if node.config.onlyX}}checked{{/if}}> onlyX</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="tiling" data-type="boolean" {{#if node.config.tiling}}checked{{/if}}> tiling</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="local" data-type="boolean" {{#if node.config.local}}checked{{/if}}> local</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="gridUnits" data-type="boolean" {{#if node.config.gridUnits}}checked{{/if}}> gridUnits</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="requiresLineOfSight" data-type="boolean" {{#if node.config.requiresLineOfSight}}checked{{/if}}> requiresLineOfSight</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="hideLineOfSight" data-type="boolean" {{#if node.config.hideLineOfSight}}checked{{/if}}> hideLineOfSight</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SPRITE OFFSET (child) --}}
+          {{#if (eq node.type "spriteOffset")}}
+            <fieldset class="v-group">
+              <legend>Sprite Offset</legend>
+
+              <div class="v-field">
+                <label>Offset X
+                  <input type="number" data-config="x" data-type="number" value="{{node.config.x}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Offset Y
+                  <input type="number" data-config="y" data-type="number" value="{{node.config.y}}">
+                </label>
+              </div>
+
+              <div class="v-field"><label><input type="checkbox" data-config="gridUnits" data-type="boolean" {{#if node.config.gridUnits}}checked{{/if}}> gridUnits</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="local" data-type="boolean" {{#if node.config.local}}checked{{/if}}> local</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- RANDOM SPRITE ROTATION (child) --}}
+          {{#if (eq node.type "randomSpriteRotation")}}
+            <fieldset class="v-group">
+              <legend>Random Sprite Rotation</legend>
+              <div class="v-field"><label><input type="checkbox" data-config="enabled" data-type="boolean" {{#if node.config.enabled}}checked{{/if}}> enabled</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ZERO SPRITE ROTATION (child) --}}
+          {{#if (eq node.type "zeroSpriteRotation")}}
+            <fieldset class="v-group">
+              <legend>Zero Sprite Rotation</legend>
+              <div class="v-field"><label><input type="checkbox" data-config="enabled" data-type="boolean" {{#if node.config.enabled}}checked{{/if}}> enabled</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- PERSIST (child) --}}
+          {{#if (eq node.type "persist")}}
+            <fieldset class="v-group">
+              <legend>Persist</legend>
+
+              <div class="v-field"><label><input type="checkbox" data-config="enabled" data-type="boolean" {{#if node.config.enabled}}checked{{/if}}> enabled</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="persistTokenPrototype" data-type="boolean" {{#if node.config.persistTokenPrototype}}checked{{/if}}> persistTokenPrototype</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- TEMPORARY (child) --}}
+          {{#if (eq node.type "temporary")}}
+            <fieldset class="v-group">
+              <legend>Temporary</legend>
+              <div class="v-field"><label><input type="checkbox" data-config="enabled" data-type="boolean" {{#if node.config.enabled}}checked{{/if}}> enabled</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- EXTRA END DURATION (child) --}}
+          {{#if (eq node.type "extraEndDuration")}}
+            <fieldset class="v-group">
+              <legend>Extra End Duration</legend>
+
+              <div class="v-field">
+                <label>Duration (ms)
+                  <input type="number" data-config="duration" data-type="number" value="{{node.config.duration}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ORIGIN (child) --}}
+          {{#if (eq node.type "origin")}}
+            <fieldset class="v-group">
+              <legend>Origin</legend>
+              <div class="v-field">
+                <label>UUID / origin
+                  <input type="text" data-config="origin" value="{{node.config.origin}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- NAME (child) --}}
+          {{#if (eq node.type "name")}}
+            <fieldset class="v-group">
+              <legend>Name</legend>
+              <div class="v-field">
+                <label>Name
+                  <input type="text" data-config="name" value="{{node.config.name}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- PRIVATE (child) --}}
+          {{#if (eq node.type "private")}}
+            <fieldset class="v-group">
+              <legend>Private</legend>
+              <div class="v-field"><label><input type="checkbox" data-config="enabled" data-type="boolean" {{#if node.config.enabled}}checked{{/if}}> enabled</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- MISSED (child) --}}
+          {{#if (eq node.type "missed")}}
+            <fieldset class="v-group">
+              <legend>Missed</legend>
+              <div class="v-field"><label><input type="checkbox" data-config="enabled" data-type="boolean" {{#if node.config.enabled}}checked{{/if}}> enabled</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ADD OVERRIDE (child) --}}
+          {{#if (eq node.type "addOverride")}}
+            <fieldset class="v-group">
+              <legend>Add Override</legend>
+              <div class="v-field">
+                <label>Body
+                  <textarea data-config="body" rows="6">{{node.config.body}}</textarea>
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SIZE (child) --}}
+          {{#if (eq node.type "size")}}
+            <fieldset class="v-group">
+              <legend>Size</legend>
+
+              <div class="v-field">
+                <label>Width
+                  <input type="number" data-config="width" data-type="number" value="{{node.config.width}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Height
+                  <input type="number" data-config="height" data-type="number" value="{{node.config.height}}">
+                </label>
+              </div>
+
+              <div class="v-field"><label><input type="checkbox" data-config="gridUnits" data-type="boolean" {{#if node.config.gridUnits}}checked{{/if}}> gridUnits</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- TEMPLATE OPTIONS (child) --}}
+          {{#if (eq node.type "templateOpts")}}
+            <fieldset class="v-group">
+              <legend>Template</legend>
+
+              <div class="v-field">
+                <label>Grid size
+                  <input type="number" data-config="gridSize" data-type="number" value="{{node.config.gridSize}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Start point
+                  <input type="number" data-config="startPoint" data-type="number" value="{{node.config.startPoint}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>End point
+                  <input type="number" data-config="endPoint" data-type="number" value="{{node.config.endPoint}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SET MUSTACHE (child) --}}
+          {{#if (eq node.type "setMustache")}}
+            <fieldset class="v-group">
+              <legend>Set Mustache</legend>
+              <div class="v-field">
+                <label>Data (JSON/Mustache object)
+                  <textarea data-config="data" rows="6">{{node.config.data}}</textarea>
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SCALE (child) --}}
+          {{#if (eq node.type "scale")}}
+            <fieldset class="v-group">
+              <legend>Scale</legend>
+
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="uniform" {{#if (eq node.config.mode "uniform")}}selected{{/if}}>Uniform</option>
+                    <option value="object"  {{#if (eq node.config.mode "object")}}selected{{/if}}>Object</option>
+                    <option value="random"  {{#if (eq node.config.mode "random")}}selected{{/if}}>Random</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale (uniform)
+                  <input type="number" data-config="scale" data-type="number" value="{{node.config.scale}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale X
+                  <input type="number" data-config="scaleX" data-type="number" value="{{node.config.scaleX}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale Y
+                  <input type="number" data-config="scaleY" data-type="number" value="{{node.config.scaleY}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Random min
+                  <input type="number" data-config="min" data-type="number" value="{{node.config.min}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Random max
+                  <input type="number" data-config="max" data-type="number" value="{{node.config.max}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SCALE IN (child) --}}
+          {{#if (eq node.type "scaleIn")}}
+            <fieldset class="v-group">
+              <legend>Scale In</legend>
+
+              <div class="v-field">
+                <label>Scale
+                  <input type="number" data-config="scale" data-type="number" value="{{node.config.scale}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale X
+                  <input type="number" data-config="scaleX" data-type="number" value="{{node.config.scaleX}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale Y
+                  <input type="number" data-config="scaleY" data-type="number" value="{{node.config.scaleY}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Duration (ms)
+                  <input type="number" data-config="duration" data-type="number" value="{{node.config.duration}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Ease
+                  <input type="text" data-config="ease" value="{{node.config.ease}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Delay (ms)
+                  <input type="number" data-config="delay" data-type="number" value="{{node.config.delay}}">
+                </label>
+              </div>
+
+              <div class="v-field"><label><input type="checkbox" data-config="isObject" data-type="boolean" {{#if node.config.isObject}}checked{{/if}}> scale as object</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SCALE OUT (child) --}}
+          {{#if (eq node.type "scaleOut")}}
+            <fieldset class="v-group">
+              <legend>Scale Out</legend>
+
+              <div class="v-field">
+                <label>Scale
+                  <input type="number" data-config="scale" data-type="number" value="{{node.config.scale}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale X
+                  <input type="number" data-config="scaleX" data-type="number" value="{{node.config.scaleX}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale Y
+                  <input type="number" data-config="scaleY" data-type="number" value="{{node.config.scaleY}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Duration (ms)
+                  <input type="number" data-config="duration" data-type="number" value="{{node.config.duration}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Ease
+                  <input type="text" data-config="ease" value="{{node.config.ease}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Delay (ms)
+                  <input type="number" data-config="delay" data-type="number" value="{{node.config.delay}}">
+                </label>
+              </div>
+
+              <div class="v-field"><label><input type="checkbox" data-config="isObject" data-type="boolean" {{#if node.config.isObject}}checked{{/if}}> scale as object</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SCALE TO OBJECT (child) --}}
+          {{#if (eq node.type "scaleToObject")}}
+            <fieldset class="v-group">
+              <legend>Scale To Object</legend>
+
+              <div class="v-field">
+                <label>Multiplier
+                  <input type="number" data-config="multiplier" data-type="number" value="{{node.config.multiplier}}">
+                </label>
+              </div>
+
+              <div class="v-field"><label><input type="checkbox" data-config="uniform" data-type="boolean" {{#if node.config.uniform}}checked{{/if}}> uniform</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="considerTokenScale" data-type="boolean" {{#if node.config.considerTokenScale}}checked{{/if}}> considerTokenScale</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SPRITE SCALE (child) --}}
+          {{#if (eq node.type "spriteScale")}}
+            <fieldset class="v-group">
+              <legend>Sprite Scale</legend>
+
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="uniform" {{#if (eq node.config.mode "uniform")}}selected{{/if}}>Uniform</option>
+                    <option value="object"  {{#if (eq node.config.mode "object")}}selected{{/if}}>Object</option>
+                    <option value="random"  {{#if (eq node.config.mode "random")}}selected{{/if}}>Random</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale (uniform)
+                  <input type="number" data-config="scale" data-type="number" value="{{node.config.scale}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale X
+                  <input type="number" data-config="scaleX" data-type="number" value="{{node.config.scaleX}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale Y
+                  <input type="number" data-config="scaleY" data-type="number" value="{{node.config.scaleY}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Random min
+                  <input type="number" data-config="min" data-type="number" value="{{node.config.min}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Random max
+                  <input type="number" data-config="max" data-type="number" value="{{node.config.max}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ANCHOR (child) --}}
+          {{#if (eq node.type "anchor")}}
+            <fieldset class="v-group">
+              <legend>Anchor</legend>
+
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="uniform" {{#if (eq node.config.mode "uniform")}}selected{{/if}}>Uniform</option>
+                    <option value="object"  {{#if (eq node.config.mode "object")}}selected{{/if}}>Object</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Anchor
+                  <input type="number" data-config="anchor" data-type="number" value="{{node.config.anchor}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Anchor X
+                  <input type="number" data-config="x" data-type="number" value="{{node.config.x}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Anchor Y
+                  <input type="number" data-config="y" data-type="number" value="{{node.config.y}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SPRITE ANCHOR (child) --}}
+          {{#if (eq node.type "spriteAnchor")}}
+            <fieldset class="v-group">
+              <legend>Sprite Anchor</legend>
+
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="uniform" {{#if (eq node.config.mode "uniform")}}selected{{/if}}>Uniform</option>
+                    <option value="object"  {{#if (eq node.config.mode "object")}}selected{{/if}}>Object</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Anchor
+                  <input type="number" data-config="anchor" data-type="number" value="{{node.config.anchor}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Anchor X
+                  <input type="number" data-config="x" data-type="number" value="{{node.config.x}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Anchor Y
+                  <input type="number" data-config="y" data-type="number" value="{{node.config.y}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CENTER (child) --}}
+          {{#if (eq node.type "center")}}
+            <fieldset class="v-group">
+              <legend>Center</legend>
+            </fieldset>
+          {{/if}}
+
+          {{!-- MIRROR (child) --}}
+          {{#if (eq node.type "mirror")}}
+            <fieldset class="v-group">
+              <legend>Mirror</legend>
+              <div class="v-field"><label><input type="checkbox" data-config="mirrorX" data-type="boolean" {{#if node.config.mirrorX}}checked{{/if}}> mirrorX</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="mirrorY" data-type="boolean" {{#if node.config.mirrorY}}checked{{/if}}> mirrorY</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="randomMirrorX" data-type="boolean" {{#if node.config.randomMirrorX}}checked{{/if}}> randomizeMirrorX</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="randomMirrorY" data-type="boolean" {{#if node.config.randomMirrorY}}checked{{/if}}> randomizeMirrorY</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SPRITE ROTATION (child) --}}
+          {{#if (eq node.type "spriteRotation")}}
+            <fieldset class="v-group">
+              <legend>Sprite Rotation</legend>
+              <div class="v-field">
+                <label>Rotation (deg)
+                  <input type="number" data-config="rotation" data-type="number" value="{{node.config.rotation}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- RANDOM ROTATION (child) --}}
+          {{#if (eq node.type "randomRotation")}}
+            <fieldset class="v-group">
+              <legend>Random Rotation</legend>
+              <div class="v-field"><label><input type="checkbox" data-config="enabled" data-type="boolean" {{#if node.config.enabled}}checked{{/if}}> enabled</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- PLAYBACK RATE (child) --}}
+          {{#if (eq node.type "playbackRate")}}
+            <fieldset class="v-group">
+              <legend>Playback Rate</legend>
+              <div class="v-field">
+                <label>Rate
+                  <input type="number" data-config="rate" data-type="number" value="{{node.config.rate}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- LAYERING (child) --}}
+          {{#if (eq node.type "layering")}}
+            <fieldset class="v-group">
+              <legend>Layering</legend>
+
+              <div class="v-field"><label><input type="checkbox" data-config="belowTokens" data-type="boolean" {{#if node.config.belowTokens}}checked{{/if}}> belowTokens</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="belowTiles" data-type="boolean" {{#if node.config.belowTiles}}checked{{/if}}> belowTiles</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="aboveLighting" data-type="boolean" {{#if node.config.aboveLighting}}checked{{/if}}> aboveLighting</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="aboveInterface" data-type="boolean" {{#if node.config.aboveInterface}}checked{{/if}}> aboveInterface</label></div>
+
+              <div class="v-field">
+                <label>Z-Index
+                  <input type="number" data-config="zIndex" data-type="number" value="{{node.config.zIndex}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Sort layer
+                  <input type="number" data-config="sortLayer" data-type="number" value="{{node.config.sortLayer}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ANIMATE PROPERTY (child) --}}
+          {{#if (eq node.type "animateProperty")}}
+            <fieldset class="v-group">
+              <legend>Animate Property</legend>
+
+              <div class="v-field">
+                <label>Target
+                  <input type="text" data-config="target" value="{{node.config.target}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Property
+                  <input type="text" data-config="property" value="{{node.config.property}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>From
+                  <input type="number" data-config="from" data-type="number" value="{{node.config.from}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>To
+                  <input type="number" data-config="to" data-type="number" value="{{node.config.to}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Duration
+                  <input type="number" data-config="duration" data-type="number" value="{{node.config.duration}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Ease
+                  <input type="text" data-config="ease" value="{{node.config.ease}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Delay
+                  <input type="number" data-config="delay" data-type="number" value="{{node.config.delay}}">
+                </label>
+              </div>
+
+              <div class="v-field"><label><input type="checkbox" data-config="gridUnits" data-type="boolean" {{#if node.config.gridUnits}}checked{{/if}}> gridUnits</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="fromEnd" data-type="boolean" {{#if node.config.fromEnd}}checked{{/if}}> fromEnd</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="absolute" data-type="boolean" {{#if node.config.absolute}}checked{{/if}}> absolute</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- LOOP PROPERTY (child) --}}
+          {{#if (eq node.type "loopProperty")}}
+            <fieldset class="v-group">
+              <legend>Loop Property</legend>
+
+              <div class="v-field">
+                <label>Target
+                  <input type="text" data-config="target" value="{{node.config.target}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Property
+                  <input type="text" data-config="property" value="{{node.config.property}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>From
+                  <input type="number" data-config="from" data-type="number" value="{{node.config.from}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>To
+                  <input type="number" data-config="to" data-type="number" value="{{node.config.to}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Duration
+                  <input type="number" data-config="duration" data-type="number" value="{{node.config.duration}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Ease
+                  <input type="text" data-config="ease" value="{{node.config.ease}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Delay
+                  <input type="number" data-config="delay" data-type="number" value="{{node.config.delay}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Loops
+                  <input type="number" data-config="loops" data-type="number" value="{{node.config.loops}}">
+                </label>
+              </div>
+
+              <div class="v-field"><label><input type="checkbox" data-config="pingPong" data-type="boolean" {{#if node.config.pingPong}}checked{{/if}}> pingPong</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="gridUnits" data-type="boolean" {{#if node.config.gridUnits}}checked{{/if}}> gridUnits</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- FILTER (child) --}}
+          {{#if (eq node.type "filter")}}
+            <fieldset class="v-group">
+              <legend>Filter</legend>
+
+              <div class="v-field">
+                <label>Filter name
+                  <input type="text" data-config="filter" value="{{node.config.filter}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Options (JSON)
+                  <textarea data-config="options" rows="6">{{node.config.options}}</textarea>
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- TEXT (child) --}}
+          {{#if (eq node.type "text")}}
+            <fieldset class="v-group">
+              <legend>Text</legend>
+
+              <div class="v-field">
+                <label>Text
+                  <input type="text" data-config="text" value="{{node.config.text}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Style (JSON)
+                  <textarea data-config="style" rows="6">{{node.config.style}}</textarea>
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SHAPE (child) --}}
+          {{#if (eq node.type "shape")}}
+            <fieldset class="v-group">
+              <legend>Shape</legend>
+
+              <div class="v-field">
+                <label>Type
+                  <input type="text" data-config="type" value="{{node.config.type}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Options (JSON)
+                  <textarea data-config="options" rows="6">{{node.config.options}}</textarea>
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- XRAY (child) --}}
+          {{#if (eq node.type "xray")}}
+            <fieldset class="v-group">
+              <legend>XRay</legend>
+              <div class="v-field"><label><input type="checkbox" data-config="enabled" data-type="boolean" {{#if node.config.enabled}}checked{{/if}}> enabled</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- MASK (child) --}}
+          {{#if (eq node.type "mask")}}
+            <fieldset class="v-group">
+              <legend>Mask</legend>
+
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="source" {{#if (eq node.config.mode "source")}}selected{{/if}}>Source</option>
+                    <option value="ids"    {{#if (eq node.config.mode "ids")}}selected{{/if}}>IDs</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>IDs (comma separated)
+                  <input type="text" data-config="ids" value="{{node.config.ids}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- TIE TO DOCUMENTS (child) --}}
+          {{#if (eq node.type "tieToDocuments")}}
+            <fieldset class="v-group">
+              <legend>Tie To Documents</legend>
+              <div class="v-field">
+                <label>UUIDs (comma separated)
+                  <input type="text" data-config="uuids" value="{{node.config.uuids}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SYNC GROUP (child) --}}
+          {{#if (eq node.type "syncGroup")}}
+            <fieldset class="v-group">
+              <legend>Sync Group</legend>
+              <div class="v-field">
+                <label>Name
+                  <input type="text" data-config="name" value="{{node.config.name}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ISOMETRIC (child) --}}
+          {{#if (eq node.type "isometric")}}
+            <fieldset class="v-group">
+              <legend>Isometric</legend>
+              <div class="v-field"><label><input type="checkbox" data-config="overlay" data-type="boolean" {{#if node.config.overlay}}checked{{/if}}> overlay</label></div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SCREEN SPACE (child) --}}
+          {{#if (eq node.type "screenSpace")}}
+            <fieldset class="v-group">
+              <legend>Screen Space</legend>
+
+              <div class="v-field"><label><input type="checkbox" data-config="screenSpace" data-type="boolean" {{#if node.config.screenSpace}}checked{{/if}}> screenSpace</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="aboveUI" data-type="boolean" {{#if node.config.aboveUI}}checked{{/if}}> aboveUI</label></div>
+
+              <div class="v-field">
+                <label>Anchor X
+                  <input type="number" data-config="anchorX" data-type="number" value="{{node.config.anchorX}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Anchor Y
+                  <input type="number" data-config="anchorY" data-type="number" value="{{node.config.anchorY}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Anchor (uniform)
+                  <input type="number" data-config="anchor" data-type="number" value="{{node.config.anchor}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Position X
+                  <input type="number" data-config="posX" data-type="number" value="{{node.config.posX}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Position Y
+                  <input type="number" data-config="posY" data-type="number" value="{{node.config.posY}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale X
+                  <input type="number" data-config="scaleX" data-type="number" value="{{node.config.scaleX}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>Scale Y
+                  <input type="number" data-config="scaleY" data-type="number" value="{{node.config.scaleY}}">
+                </label>
+              </div>
+
+              <div class="v-field"><label><input type="checkbox" data-config="fitX" data-type="boolean" {{#if node.config.fitX}}checked{{/if}}> fitX</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="fitY" data-type="boolean" {{#if node.config.fitY}}checked{{/if}}> fitY</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="ratioX" data-type="boolean" {{#if node.config.ratioX}}checked{{/if}}> ratioX</label></div>
+              <div class="v-field"><label><input type="checkbox" data-config="ratioY" data-type="boolean" {{#if node.config.ratioY}}checked{{/if}}> ratioY</label></div>
+            </fieldset>
+          {{/if}}
             </fieldset>
           {{/if}}
 
