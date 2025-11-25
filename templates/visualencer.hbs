@@ -1060,7 +1060,7 @@
           {{!-- SCROLLING TEXT (root) --}}
           {{#if (eq node.type "scrollingText")}}
             <div class="v-field">
-              <label>Texto
+              <label>Text
                 <input type="text" data-config="text" value="{{node.config.text}}">
               </label>
             </div>
@@ -1141,6 +1141,111 @@
                          data-config="startTimePerc"
                          data-type="number"
                          value="{{node.config.startTimePerc}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- END TIME (child) --}}
+          {{#if (eq node.type "endTime")}}
+            <fieldset class="v-group">
+              <legend>End Time</legend>
+
+              <div class="v-field">
+                <label>endTime (ms)
+                  <input type="number"
+                         data-config="endTime"
+                         data-type="number"
+                         value="{{node.config.endTime}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>endTimePerc (0–1)
+                  <input type="number"
+                         step="0.05" min="0" max="1"
+                         data-config="endTimePerc"
+                         data-type="number"
+                         value="{{node.config.endTimePerc}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- TIME RANGE (child) --}}
+          {{#if (eq node.type "timeRange")}}
+            <fieldset class="v-group">
+              <legend>Time Range</legend>
+
+              <div class="v-field">
+                <label>Start (ms)
+                  <input type="number"
+                         data-config="start"
+                         data-type="number"
+                         value="{{node.config.start}}">
+                </label>
+              </div>
+
+              <div class="v-field">
+                <label>End (ms)
+                  <input type="number"
+                         data-config="end"
+                         data-type="number"
+                         value="{{node.config.end}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- PRESET (child) --}}
+          {{#if (eq node.type "presetSound")}}
+            <fieldset class="v-group">
+              <legend>Preset</legend>
+              <div class="v-field">
+                <label>Preset name
+                  <input type="text"
+                         data-config="preset"
+                         value="{{node.config.preset}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- BASE FOLDER (child) --}}
+          {{#if (eq node.type "baseFolder")}}
+            <fieldset class="v-group">
+              <legend>Base Folder</legend>
+              <div class="v-field">
+                <label>Base folder path
+                  <input type="text"
+                         data-config="baseFolder"
+                         value="{{node.config.baseFolder}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SET MUSTACHE (child) --}}
+          {{#if (eq node.type "setMustache")}}
+            <fieldset class="v-group">
+              <legend>Set Mustache</legend>
+
+              <div class="v-field">
+                <label>Mustache object (JS literal)
+                  <textarea data-config="mustache" rows="4">{{node.config.mustache}}</textarea>
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ADD OVERRIDE (child) --}}
+          {{#if (eq node.type "addOverride")}}
+            <fieldset class="v-group">
+              <legend>Add Override</legend>
+              <p>Función asíncrona ejecutada antes de reproducir el sonido/efecto.</p>
+              <div class="v-field">
+                <label>Código del override
+                  <textarea data-config="body" rows="6">{{node.config.body}}</textarea>
                 </label>
               </div>
             </fieldset>
@@ -1652,18 +1757,6 @@
             </fieldset>
           {{/if}}
 
-          {{!-- ADD OVERRIDE (child) --}}
-          {{#if (eq node.type "addOverride")}}
-            <fieldset class="v-group">
-              <legend>Add Override</legend>
-              <div class="v-field">
-                <label>Body
-                  <textarea data-config="body" rows="6">{{node.config.body}}</textarea>
-                </label>
-              </div>
-            </fieldset>
-          {{/if}}
-
           {{!-- SIZE (child) --}}
           {{#if (eq node.type "size")}}
             <fieldset class="v-group">
@@ -1705,18 +1798,6 @@
               <div class="v-field">
                 <label>End point
                   <input type="number" data-config="endPoint" data-type="number" value="{{node.config.endPoint}}">
-                </label>
-              </div>
-            </fieldset>
-          {{/if}}
-
-          {{!-- SET MUSTACHE (child) --}}
-          {{#if (eq node.type "setMustache")}}
-            <fieldset class="v-group">
-              <legend>Set Mustache</legend>
-              <div class="v-field">
-                <label>Data (JSON/Mustache object)
-                  <textarea data-config="data" rows="6">{{node.config.data}}</textarea>
                 </label>
               </div>
             </fieldset>
@@ -2350,6 +2431,555 @@
               <div class="v-field"><label><input type="checkbox" data-config="ratioY" data-type="boolean" {{#if node.config.ratioY}}checked{{/if}}> ratioY</label></div>
             </fieldset>
           {{/if}}
+            </fieldset>
+          {{/if}}
+
+          {{!-- RADIUS (sound child) --}}
+          {{#if (eq node.type "radius")}}
+            <fieldset class="v-group">
+              <legend>Radius</legend>
+              <div class="v-field">
+                <label>Radius (scene units)
+                  <input type="number" data-config="radius" data-type="number" value="{{node.config.radius}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CONSTRAINED BY WALLS (sound child) --}}
+          {{#if (eq node.type "constrainedByWalls")}}
+            <fieldset class="v-group">
+              <legend>Constrained By Walls</legend>
+              <div class="v-field">
+                <label><input type="checkbox" data-config="constrainedByWalls" data-type="boolean" {{#if node.config.constrainedByWalls}}checked{{/if}}> constrainedByWalls</label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- DISTANCE EASING (sound child) --}} 
+          {{#if (eq node.type "distanceEasing")}}
+            <fieldset class="v-group">
+              <legend>Distance Easing</legend>
+              <div class="v-field">
+                <label>Apply easing by distance
+                  <select data-config="distanceEasing">
+                    <option value="true"  {{#if node.config.distanceEasing}}selected{{/if}}>true</option>
+                    <option value="false" {{#unless node.config.distanceEasing}}selected{{/unless}}>false</option>
+                  </select>
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- AUDIO CHANNEL (sound child) --}}
+          {{#if (eq node.type "audioChannel")}}
+            <fieldset class="v-group">
+              <legend>Audio Channel</legend>
+              <div class="v-field">
+                <label>Channel name
+                  <input type="text" data-config="audioChannel" value="{{node.config.audioChannel}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- ALWAYS FOR GMS (sound child) --}}
+          {{#if (eq node.type "alwaysForGMs")}}
+            <fieldset class="v-group">
+              <legend>Always For GMs</legend>
+              <div class="v-field">
+                <label><input type="checkbox" data-config="alwaysForGMs" data-type="boolean" {{#if node.config.alwaysForGMs}}checked{{/if}}> alwaysForGMs</label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- BASE EFFECT (sound child) --}}
+          {{#if (eq node.type "baseEffect")}}
+            <fieldset class="v-group">
+              <legend>Base Effect</legend>
+              <div class="v-field">
+                <label>Type
+                  <select data-config="type">
+                    <option value="" {{#unless node.config.type}}selected{{/unless}}>-</option>
+                    <option value="lowpass"  {{#if (eq node.config.type "lowpass")}}selected{{/if}}>lowpass</option>
+                    <option value="highpass" {{#if (eq node.config.type "highpass")}}selected{{/if}}>highpass</option>
+                    <option value="reverb"   {{#if (eq node.config.type "reverb")}}selected{{/if}}>reverb</option>
+                  </select>
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Intensity
+                  <input type="number" data-config="intensity" data-type="number" value="{{node.config.intensity}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- MUFFLED EFFECT (sound child) --}}
+          {{#if (eq node.type "muffledEffect")}}
+            <fieldset class="v-group">
+              <legend>Muffled Effect</legend>
+              <div class="v-field">
+                <label>Type
+                  <select data-config="type">
+                    <option value="" {{#unless node.config.type}}selected{{/unless}}>-</option>
+                    <option value="lowpass"  {{#if (eq node.config.type "lowpass")}}selected{{/if}}>lowpass</option>
+                    <option value="highpass" {{#if (eq node.config.type "highpass")}}selected{{/if}}>highpass</option>
+                    <option value="reverb"   {{#if (eq node.config.type "reverb")}}selected{{/if}}>reverb</option>
+                  </select>
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Intensity
+                  <input type="number" data-config="intensity" data-type="number" value="{{node.config.intensity}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SCROLLING TEXT DIRECTION (child) --}}
+          {{#if (eq node.type "direction")}}
+            <fieldset class="v-group">
+              <legend>Direction</legend>
+              <div class="v-field">
+                <label>Direction / Anchor
+                  <input type="text" data-config="direction" value="{{node.config.direction}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- SCROLLING TEXT JITTER (child) --}}
+          {{#if (eq node.type "scrollingTextJitter")}}
+            <fieldset class="v-group">
+              <legend>Jitter</legend>
+              <div class="v-field">
+                <label>Random offset (0-1)
+                  <input type="number" step="0.05" min="0" max="1" data-config="jitter" data-type="number" value="{{node.config.jitter}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CANVAS PAN LOCK VIEW (child) --}}
+          {{#if (eq node.type "canvasPanLockView")}}
+            <fieldset class="v-group">
+              <legend>Lock View</legend>
+              <div class="v-field">
+                <label>Duration (ms)
+                  <input type="number" data-config="lockMs" data-type="number" value="{{node.config.lockMs}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CANVAS PAN SPEED (child) --}}
+          {{#if (eq node.type "canvasPanSpeed")}}
+            <fieldset class="v-group">
+              <legend>Speed</legend>
+              <div class="v-field">
+                <label>Pixels per second
+                  <input type="number" data-config="speed" data-type="number" value="{{node.config.speed}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CANVAS PAN SHAKE (child) --}}
+          {{#if (eq node.type "canvasPanShake")}}
+            <fieldset class="v-group">
+              <legend>Canvas Shake</legend>
+              <div class="v-field">
+                <label>Duration (ms)
+                  <input type="number" data-config="duration" data-type="number" value="{{node.config.duration}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Strength
+                  <input type="number" data-config="strength" data-type="number" value="{{node.config.strength}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Frequency (ms)
+                  <input type="number" data-config="frequency" data-type="number" value="{{node.config.frequency}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Fade in (ms)
+                  <input type="number" data-config="fadeInDuration" data-type="number" value="{{node.config.fadeInDuration}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Fade out (ms)
+                  <input type="number" data-config="fadeOutDuration" data-type="number" value="{{node.config.fadeOutDuration}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox" data-config="rotation" data-type="boolean" {{#if node.config.rotation}}checked{{/if}}>
+                  Enable rotation shake
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR NAME (child) --}}
+          {{#if (eq node.type "crosshairName")}}
+            <fieldset class="v-group">
+              <legend>Crosshair Name</legend>
+              <div class="v-field">
+                <label>Name
+                  <input type="text" data-config="name" value="{{node.config.name}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR TYPE (child) --}}
+          {{#if (eq node.type "crosshairType")}}
+            <fieldset class="v-group">
+              <legend>Crosshair Type</legend>
+              <div class="v-field">
+                <label>Type
+                  <input type="text" data-config="type" value="{{node.config.type}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR LABEL (child) --}}
+          {{#if (eq node.type "crosshairLabel")}}
+            <fieldset class="v-group">
+              <legend>Crosshair Label</legend>
+              <div class="v-field">
+                <label>Label
+                  <input type="text" data-config="label" value="{{node.config.label}}">
+                </label>
+              </div>
+              <div class="v-field grid-2">
+                <label>dx
+                  <input type="number" data-config="dx" data-type="number" value="{{node.config.dx}}">
+                </label>
+                <label>dy
+                  <input type="number" data-config="dy" data-type="number" value="{{node.config.dy}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR SNAP POSITION (child) --}}
+          {{#if (eq node.type "crosshairSnapPosition")}}
+            <fieldset class="v-group">
+              <legend>Snap Position</legend>
+              <div class="v-field">
+                <label>Mode / Value
+                  <input type="text" data-config="snapPosition" value="{{node.config.snapPosition}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR DISTANCE (child) --}}
+          {{#if (eq node.type "crosshairDistance")}}
+            <fieldset class="v-group">
+              <legend>Distance / Radius</legend>
+              <div class="v-field">
+                <label>Distance
+                  <input type="number" data-config="distance" data-type="number" value="{{node.config.distance}}">
+                </label>
+              </div>
+              <div class="v-field grid-2">
+                <label>Min
+                  <input type="number" data-config="min" data-type="number" value="{{node.config.min}}">
+                </label>
+                <label>Max
+                  <input type="number" data-config="max" data-type="number" value="{{node.config.max}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR ANGLE (child) --}}
+          {{#if (eq node.type "crosshairAngle")}}
+            <fieldset class="v-group">
+              <legend>Angle</legend>
+              <div class="v-field">
+                <label>Angle (deg)
+                  <input type="number" data-config="angle" data-type="number" value="{{node.config.angle}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR WIDTH (child) --}}
+          {{#if (eq node.type "crosshairWidth")}}
+            <fieldset class="v-group">
+              <legend>Width</legend>
+              <div class="v-field">
+                <label>Width
+                  <input type="number" data-config="width" data-type="number" value="{{node.config.width}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR SNAP DIRECTION (child) --}}
+          {{#if (eq node.type "crosshairSnapDirection")}}
+            <fieldset class="v-group">
+              <legend>Snap Direction</legend>
+              <div class="v-field">
+                <label>Increment (deg)
+                  <input type="number" data-config="snapDirection" data-type="number" value="{{node.config.snapDirection}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR LOCK MANUAL ROTATION (child) --}}
+          {{#if (eq node.type "crosshairLockManualRotation")}}
+            <fieldset class="v-group">
+              <legend>Manual Rotation</legend>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox" data-config="lock" data-type="boolean" {{#if node.config.lock}}checked{{/if}}>
+                  Lock manual rotation
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR LOCK DRAG (child) --}}
+          {{#if (eq node.type "crosshairLockDrag")}}
+            <fieldset class="v-group">
+              <legend>Lock Drag</legend>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox" data-config="lock" data-type="boolean" {{#if node.config.lock}}checked{{/if}}>
+                  Prevent drag movement
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR ICON (child) --}}
+          {{#if (eq node.type "crosshairIcon")}}
+            <fieldset class="v-group">
+              <legend>Icon</legend>
+              <div class="v-field">
+                <label>Icon path
+                  <input type="text" data-config="icon" value="{{node.config.icon}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox" data-config="borderVisible" data-type="boolean" {{#if node.config.borderVisible}}checked{{/if}}>
+                  Show icon border
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR BORDER COLOR (child) --}}
+          {{#if (eq node.type "crosshairBorderColor")}}
+            <fieldset class="v-group">
+              <legend>Border Color</legend>
+              <div class="v-field">
+                <label>Color
+                  <input type="text" data-config="color" value="{{node.config.color}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Alpha
+                  <input type="number" step="0.05" min="0" max="1" data-config="alpha" data-type="number" value="{{node.config.alpha}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR FILL COLOR (child) --}}
+          {{#if (eq node.type "crosshairFillColor")}}
+            <fieldset class="v-group">
+              <legend>Fill Color</legend>
+              <div class="v-field">
+                <label>Color
+                  <input type="text" data-config="color" value="{{node.config.color}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Alpha
+                  <input type="number" step="0.05" min="0" max="1" data-config="alpha" data-type="number" value="{{node.config.alpha}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR TEXTURE (child) --}}
+          {{#if (eq node.type "crosshairTexture")}}
+            <fieldset class="v-group">
+              <legend>Texture</legend>
+              <div class="v-field">
+                <label>Texture path
+                  <input type="text" data-config="texture" value="{{node.config.texture}}">
+                </label>
+              </div>
+              <div class="v-field grid-2">
+                <label>Alpha
+                  <input type="number" step="0.05" min="0" max="1" data-config="alpha" data-type="number" value="{{node.config.alpha}}">
+                </label>
+                <label>Scale
+                  <input type="number" step="0.1" data-config="scale" data-type="number" value="{{node.config.scale}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR LOCATION (child) --}}
+          {{#if (eq node.type "crosshairLocation")}}
+            <fieldset class="v-group">
+              <legend>Crosshair Source</legend>
+              <div class="v-field">
+                <label>Mode
+                  <select data-config="mode">
+                    <option value="selected-token"  {{#if (eq node.config.mode "selected-token")}}selected{{/if}}>Token seleccionado</option>
+                    <option value="selected-target" {{#if (eq node.config.mode "selected-target")}}selected{{/if}}>Objetivo seleccionado</option>
+                    <option value="token-id"        {{#if (eq node.config.mode "token-id")}}selected{{/if}}>Token por ID</option>
+                    <option value="token-name"      {{#if (eq node.config.mode "token-name")}}selected{{/if}}>Token por nombre</option>
+                    <option value="tile-id"         {{#if (eq node.config.mode "tile-id")}}selected{{/if}}>Tile por ID</option>
+                    <option value="stored-name"     {{#if (eq node.config.mode "stored-name")}}selected{{/if}}>Nombre almacenado</option>
+                    <option value="point"           {{#if (eq node.config.mode "point")}}selected{{/if}}>Coordenadas</option>
+                  </select>
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Stored name
+                  <input type="text" data-config="storedName" value="{{node.config.storedName}}">
+                </label>
+              </div>
+              <div class="v-field grid-2">
+                <label>Token ID
+                  <input type="text" data-config="tokenId" value="{{node.config.tokenId}}">
+                </label>
+                <label>Token name
+                  <input type="text" data-config="tokenName" value="{{node.config.tokenName}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Tile ID
+                  <input type="text" data-config="tileId" value="{{node.config.tileId}}">
+                </label>
+              </div>
+              <div class="v-field grid-2">
+                <label>X
+                  <input type="number" data-config="x" data-type="number" value="{{node.config.x}}">
+                </label>
+                <label>Y
+                  <input type="number" data-config="y" data-type="number" value="{{node.config.y}}">
+                </label>
+              </div>
+              <div class="v-field grid-2">
+                <label>Min range
+                  <input type="number" data-config="limitMinRange" data-type="number" value="{{node.config.limitMinRange}}">
+                </label>
+                <label>Max range
+                  <input type="number" data-config="limitMaxRange" data-type="number" value="{{node.config.limitMaxRange}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox" data-config="showRange" data-type="boolean" {{#if node.config.showRange}}checked{{/if}}>
+                  Mostrar rango en HUD
+                </label>
+              </div>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox" data-config="lockToEdge" data-type="boolean" {{#if node.config.lockToEdge}}checked{{/if}}>
+                  Bloquear al borde del objetivo
+                </label>
+              </div>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox" data-config="lockToEdgeDirection" data-type="boolean" {{#if node.config.lockToEdgeDirection}}checked{{/if}}>
+                  Usar normal del borde
+                </label>
+              </div>
+              <div class="v-field grid-2">
+                <label>Offset X
+                  <input type="number" data-config="offsetX" data-type="number" value="{{node.config.offsetX}}">
+                </label>
+                <label>Offset Y
+                  <input type="number" data-config="offsetY" data-type="number" value="{{node.config.offsetY}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Wall behavior
+                  <input type="text" data-config="wallBehavior" value="{{node.config.wallBehavior}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox" data-config="displayRangePoly" data-type="boolean" {{#if node.config.displayRangePoly}}checked{{/if}}>
+                  Mostrar polígono de rango
+                </label>
+              </div>
+              <div class="v-field grid-2">
+                <label>Relleno
+                  <input type="text" data-config="rangePolyFillColor" value="{{node.config.rangePolyFillColor}}">
+                </label>
+                <label>Borde
+                  <input type="text" data-config="rangePolyLineColor" value="{{node.config.rangePolyLineColor}}">
+                </label>
+              </div>
+              <div class="v-field grid-2">
+                <label>Alpha relleno
+                  <input type="number" step="0.05" min="0" max="1" data-config="rangePolyFillAlpha" data-type="number" value="{{node.config.rangePolyFillAlpha}}">
+                </label>
+                <label>Alpha borde
+                  <input type="number" step="0.05" min="0" max="1" data-config="rangePolyLineAlpha" data-type="number" value="{{node.config.rangePolyLineAlpha}}">
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR PERSIST (child) --}}
+          {{#if (eq node.type "crosshairPersist")}}
+            <fieldset class="v-group">
+              <legend>Persist</legend>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox" data-config="persist" data-type="boolean" {{#if node.config.persist}}checked{{/if}}>
+                  Spawn measured template
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR GRID HIGHLIGHT (child) --}}
+          {{#if (eq node.type "crosshairGridHighlight")}}
+            <fieldset class="v-group">
+              <legend>Grid Highlight</legend>
+              <div class="v-field">
+                <label>
+                  <input type="checkbox" data-config="highlight" data-type="boolean" {{#if node.config.highlight}}checked{{/if}}>
+                  Highlight grid
+                </label>
+              </div>
+            </fieldset>
+          {{/if}}
+
+          {{!-- CROSSHAIR CALLBACK (child) --}}
+          {{#if (eq node.type "crosshairCallback")}}
+            <fieldset class="v-group">
+              <legend>Crosshair Callback</legend>
+              <div class="v-field">
+                <label>Hook constant/expression
+                  <input type="text" data-config="hook" value="{{node.config.hook}}">
+                </label>
+              </div>
+              <div class="v-field">
+                <label>Callback body
+                  <textarea data-config="body" rows="4">{{node.config.body}}</textarea>
+                </label>
+              </div>
             </fieldset>
           {{/if}}
 
