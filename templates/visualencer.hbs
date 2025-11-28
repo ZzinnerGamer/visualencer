@@ -109,12 +109,12 @@
               <h3 style="color:white;"><span>How do I use this?</span></h3>
               <p>When creating an effect section, you can assemble these methods like this:</p>
               <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js">
-<span style="color:#89ddff;">Start / Sequence</span>
-<span style="color:#f07178;"> → </span><span style="color:#89ddff;">effect</span> configure the file (example <span style="color:#ffcb6b">"modules/jb2a_patreon/Library/Generic/Healing/HealingAbility_01_Blue_200x200.webm"</span> or <span style="color:#ffcb6b">"jb2a.fire_bolt.orange"</span>)
-<span style="color:#f07178;"> → </span><span style="color:#89ddff;">atLocation</span> (example <span style="color:#ffcb6b">token selected</span>)
-<span style="color:#f07178;"> → </span><span style="color:#89ddff;">fadeIn</span> (example <span style="color:#ffcb6b">duration: 500, ease: easeOutQuint</span>)
-<span style="color:#f07178;"> → </span><span style="color:#89ddff;">fadeOut</span> (example <span style="color:#ffcb6b">duration: 250, ease: easeOutCirc</span>)
-<span style="color:#f07178;"> → </span><span style="color:#89ddff;">play</span></code></pre>
+<span style="color:#89ddff;">Start / Sequence</span><span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">effect</span> configure the file (example <span style="color:#ffcb6b">"modules/jb2a_patreon/Library/Generic/Healing/HealingAbility_01_Blue_200x200.webm"</span> or <span style="color:#ffcb6b">"jb2a.fire_bolt.orange"</span>)<span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">atLocation</span> (example <span style="color:#ffcb6b">token selected</span>)<span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">fadeIn</span> (example <span style="color:#ffcb6b">duration: 500, ease: easeOutQuint</span>)<span style="color:#f07178;"> and/or </span>
+<span style="color:#89ddff;">fadeOut</span> (example <span style="color:#ffcb6b">duration: 250, ease: easeOutCirc</span>)<span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">play</span></code></pre>
               <div class="v-field">
                 <label>Base folder
                   <input type="text" data-config="baseFolder" value="{{node.config.baseFolder}}">
@@ -132,9 +132,15 @@
 {{#if (eq node.type "atLocation")}}
   <fieldset class="v-group">
     <legend>At Location</legend>
-
+<pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js">
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">atLocation</span> (<span style="color:#ffcb6b">token selected</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">atLocation</span> (<span style="color:#ffcb6b">token target</span>)   ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">atLocation</span> (<span style="color:#ffcb6b">"tokenID"</span>)      ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">atLocation</span> (<span style="color:#ffcb6b">"tokenName"</span>)    ///</code></pre>
+<p>A smart method that can take:</p>
+<ul><li>Reference to a token</li><li>Reference to a template</li><li>Direct coordinate on the canvas</li><li>String reference (see <code>Name node</code></a>)</li></ul>
     <div class="v-field">
-      <label>Modo
+      <label>Mode
         <select data-config="mode">
           <option value="selected-token"  {{#if (eq node.config.mode "selected-token")}}selected{{/if}}>
             Token selected
@@ -201,61 +207,52 @@
     </div>
 
     <hr>
+        <p>Also supports a second options object that accepts:</p>
+        <ul><li>
+                <code>Offset node</code> (default <code> x: 0, y: 0 </code>) - causes the location to be offset by a set amount</li></ul>
 
     <div class="v-field">
-      <label>Random offset
+      <label>
+        <h4>Random offset</h4>
         <input type="number"
                data-config="randomOffset"
                data-type="number"
                value="{{node.config.randomOffset}}">
-      </label>
-    </div>
-
-    <div class="v-field">
-      <label>Offset X
-        <input type="number"
-               data-config="offsetX"
-               data-type="number"
-               value="{{node.config.offsetX}}">
-      </label>
-    </div>
-
-    <div class="v-field">
-      <label>Offset Y
-        <input type="number"
-               data-config="offsetY"
-               data-type="number"
-               value="{{node.config.offsetY}}">
+               <p><code>number|boolean</code> - causes the location to be offset by a random amount - if given a number, this acts as a multiplier for the randomness, using the size of the object (or a single grid square/hex) as the multiplier.</p>
       </label>
     </div>
 
     <div class="v-field">
       <label>
+        <h4>Cache Location
         <input type="checkbox"
                data-config="cacheLocation"
                data-type="boolean"
-               {{#if node.config.cacheLocation}}checked{{/if}}>
-        cacheLocation
+               {{#if node.config.cacheLocation}}checked{{/if}}></h4>
+               <p><code>boolean</code> - causes the given object’s location to be cached immediately rather than retrieved during the Sequence’s runtime</p>
       </label>
     </div>
 
     <div class="v-field">
       <label>
+        <h4>Local
         <input type="checkbox"
                data-config="local"
                data-type="boolean"
-               {{#if node.config.local}}checked{{/if}}>
-        local
+               {{#if node.config.local}}checked{{/if}}></h4>
+               <p><code>boolean</code> - Used with <code>offset</code> to cause the location to be offset locally to the effect’s rotation</p>
       </label>
     </div>
 
     <div class="v-field">
       <label>
+        <h4>Grid Units
         <input type="checkbox"
                data-config="gridUnits"
                data-type="boolean"
-               {{#if node.config.gridUnits}}checked{{/if}}>
-        gridUnits
+               {{#if node.config.gridUnits}}checked{{/if}}></h4>
+                <p><code>boolean</code> - Used with <code>Offset Node</code> (obligatory) to make each whole number represent in <code>x</code> and <code>y</code> to represent the effect’s scene’s grid size.</p>
+
       </label>
     </div>
   </fieldset>
@@ -279,7 +276,7 @@
               <legend>Async</legend>
               <p><code>.async()</code></p>
               <p>Calling this will make each part of the effect finish playing before the next one starts playing.</p>
-              <p>This differs from <code>.waitUntilFinished()</code> in the sense that <code>.async()</code> is for each repetition (see <code>.repeats()</code> below), whilst <code>.waitUntilFinished()</code> is for the entire effect.</p>
+              <p>This differs from the <code>Wait Until Finished node</code> in the sense that the <code>Async node</code> is for each repetition (see <code>Repeats node</code>), whilst <code>Wait Until Finished node</code> is for the entire effect.</p>
             </fieldset>
           {{/if}}
 
@@ -292,7 +289,7 @@
               <p>As an option, you can give it <code>inRepeatDelayMin</code> for a static delay between repetitions, or <code>inRepeatDelayMin</code> and <code>inRepeatDelayMax</code> for a random delay between each call.</p>
               <p>It is highly recommended that you do not load too many files at the same time, as Foundry might not be able to load all of them.</p>
               <div class="v-field">
-                <label>Repetitions
+                <label>inRepetitions
                   <input type="number"
                          min="1"
                          data-config="repeats"
@@ -353,7 +350,7 @@
             <fieldset class="v-group">
               <legend>Opacity</legend>
               <p><code>.opacity(0.5)</code></p>
-              <p>Sets the opacity of the effect. If used with <code>.fadeIn()</code> and/or <code>.fadeOut()</code>, this defines what it will fade to/from.</p>
+              <p>Sets the opacity of the effect. If used with the <code>Fade node</code>, this defines what it will fade to/from.</p>
 
               <div class="v-field">
                 <label>Opacity (0–1)
@@ -371,7 +368,7 @@
           {{#if (eq node.type "duration")}}
             <fieldset class="v-group">
               <legend>Duration</legend>
-              <p>Sets the duration of the effect. If the duration is longer than the effect’s original duration, it will loop.</p>
+              <p>Sets the duration in ms of the effect. If the duration is longer than the effect’s original duration, it will loop.</p>
 
               <div class="v-field">
                 <label>Duration (ms)
@@ -387,7 +384,7 @@
           {{!-- ON (child) --}}
           {{#if (eq node.type "on")}}
             <fieldset class="v-group">
-              <legend>On (Target)</legend>
+              <legend>On</legend>
               <p><code>.on(inToken)</code> or <code>.on(inTile)</code></p>
               <p>Sets the target object to be animated. Accepts a token or a tile.</p>
 
@@ -541,6 +538,8 @@
           {{#if (eq node.type "moveSpeed")}}
             <fieldset class="v-group">
               <legend>Move Speed</legend>
+              <p><code>.moveSpeed(500)</code></p>
+              <p>Sets the speed of the animation if <code>Move Towards node</code> has been called</p>
 
               <div class="v-field">
                 <label>moveSpeed
@@ -557,6 +556,10 @@
           {{#if (eq node.type "rotateTowards")}}
             <fieldset class="v-group">
               <legend>Rotate Towards</legend>
+              <p><code>.rotateTowards(target, options)</code></p>
+              <p><code>.rotateTowards(inToken)</code> or <code>.rotateTowards(inTile)</code> or <code>.rotateTowards({ x: 0, y: 0 })</code></p>
+              <p>Causes the target object to rotate towards a given target.</p>
+              <p>Default parameters: <code>{ duration: 0, ease: "linear", delay: 0, rotationOffset: 0, towardsCenter: true, cacheLocation: false,}</code></p>
 
               <div class="v-field">
                 <label>Mode
@@ -604,6 +607,10 @@
                 </label>
               </div>
 
+              <hr>
+              
+              <p>A second options parameter can set the duration of the rotation (0 is instant), the ease, the delay before it starts, and any given rotation offset.</p>
+
               <div class="v-field">
                 <label>Duration (ms)
                   <input type="number"
@@ -614,7 +621,9 @@
               </div>
 
               <div class="v-field">
-                <label>Ease<select data-config="ease">
+                <label>Ease
+              <p><strong>Note:</strong> The <code>ease</code> parameters are <em>not</em> supported for tokens due to Foundry removing support for it.</p>
+              <p>Check out what easings are available here: <a href="https://easings.net/" target="_blank" rel="noopener">https://easings.net/</a></p><select data-config="ease">
                     <option value="linear"           {{#if (eq node.config.ease "linear")}}selected{{/if}}>linear</option>
                     <option value="easeInSine"       {{#if (eq node.config.ease "easeInSine")}}selected{{/if}}>easeInSine</option>
                     <option value="easeOutSine"      {{#if (eq node.config.ease "easeOutSine")}}selected{{/if}}>easeOutSine</option>
@@ -680,11 +689,12 @@
 
               <div class="v-field">
                 <label>
+                  
+        <h4>Cache Location
                   <input type="checkbox"
                          data-config="cacheLocation"
                          data-type="boolean"
-                         {{#if node.config.cacheLocation}}checked{{/if}}>
-                  cacheLocation
+                         {{#if node.config.cacheLocation}}checked{{/if}}></h4>
                 </label>
               </div>
             </fieldset>
@@ -694,6 +704,11 @@
           {{#if (eq node.type "teleportTo")}}
             <fieldset class="v-group">
               <legend>Teleport To</legend>
+              <p><code>.teleportTo(target, options)</code></p>
+              <p><code>.teleportTo(inToken)</code> or <code>.teleportTo(inTile)</code> or <code>.teleportTo({ x: 0, y: 0 })</code></p>
+              <p>Sets the location to teleport the target object to.</p>
+              <p>A second options parameter can set the delay before it starts, as well as if the object should be centered on the given location.</p>
+              <p>Default parameters: <code>{ delay: 0, relativeToCenter: false }</code></p>
 
               <div class="v-field">
                 <label>Mode
@@ -752,11 +767,11 @@
 
               <div class="v-field">
                 <label>
+                  Relative to Center
                   <input type="checkbox"
                          data-config="relativeToCenter"
                          data-type="boolean"
                          {{#if node.config.relativeToCenter}}checked{{/if}}>
-                  relativeToCenter
                 </label>
               </div>
             </fieldset>
@@ -766,6 +781,8 @@
           {{#if (eq node.type "offset")}}
             <fieldset class="v-group">
               <legend>Offset</legend>
+              <p><code>.offset({ x: 0, y: 0 })</code></p>
+              <p>Causes the movement or teleportation to be offset in the X and/or Y axis</p>
 
               <div class="v-field">
                 <label>Offset X
@@ -791,7 +808,8 @@
           {{#if (eq node.type "closestSquare")}}
             <fieldset class="v-group">
               <legend>Closest Square</legend>
-              <p>Aplica <code>.closestSquare()</code> al target.</p>
+              <p><code>.closestSquare()</code> or <code>.closestSquare(boolean)</code></p>
+              <p>Causes the movement or teleportation to pick the closest non-intersecting square as the target location</p>
             </fieldset>
           {{/if}}
 
@@ -799,7 +817,8 @@
           {{#if (eq node.type "snapToGrid")}}
             <fieldset class="v-group">
               <legend>Snap To Grid</legend>
-              <p>Aplica <code>.snapToGrid()</code> al target.</p>
+              <p><code>.snapToGrid()</code> or <code>.snapToGrid(boolean)</code></p>
+              <p>Causes the final location to be snapped to the grid</p>
             </fieldset>
           {{/if}}
 
@@ -807,7 +826,8 @@
           {{#if (eq node.type "rotate")}}
             <fieldset class="v-group">
               <legend>Rotate</legend>
-
+              <p><code>.rotate(90)</code></p>
+              <p>Sets the rotation of the animation, which is added on top of the calculated rotation after <code>Rotate Towards node</code></p>
               <div class="v-field">
                 <label>Rotate (º)
                   <input type="number"
@@ -823,9 +843,16 @@
           {{#if (eq node.type "rotateIn")}}
             <fieldset class="v-group">
               <legend>Rotate In</legend>
+              <p><code>.rotateIn(degrees, duration, options)</code></p>
+              <p><code>.rotateIn(90, 250)</code> or <code>.rotateIn(-90, 500, {ease: "easeOutCubic"})</code> or <code>.rotateIn(-90, 500, { ease: "easeOutCubic", delay: 100 })</code></p>
+              <p>Causes the target object to rotate when it starts playing.</p>
+              <p>The first parameter is the degrees from which to start the rotation.</p>
+              <p>The second parameter is how many milliseconds the rotation will take.</p>
+              <p>A third options parameter can set the ease of the rotation, and the delay before it starts.</p>
+              <p>Default parameters: <code>{ ease: "linear", delay: 0 }</code></p>
 
               <div class="v-field">
-                <label>Grados
+                <label>Degrees º
                   <input type="number"
                          data-config="degrees"
                          data-type="number"
@@ -841,9 +868,14 @@
                          value="{{node.config.duration}}">
                 </label>
               </div>
+              
 
               <div class="v-field">
-                <label>Ease<select data-config="ease">
+                <label>Ease
+                    
+              <p><strong>Note:</strong> The <code>ease</code> parameters are <em>not</em> supported for tokens due to Foundry removing support for it.</p>
+              <p>Check out what easings are available here: <a href="https://easings.net/" target="_blank" rel="noopener">https://easings.net/</a></p>
+              <select data-config="ease">
                     <option value="linear"           {{#if (eq node.config.ease "linear")}}selected{{/if}}>linear</option>
                     <option value="easeInSine"       {{#if (eq node.config.ease "easeInSine")}}selected{{/if}}>easeInSine</option>
                     <option value="easeOutSine"      {{#if (eq node.config.ease "easeOutSine")}}selected{{/if}}>easeOutSine</option>
@@ -894,9 +926,16 @@
           {{#if (eq node.type "rotateOut")}}
             <fieldset class="v-group">
               <legend>Rotate Out</legend>
+              <p><code>.rotateOut(degrees, duration, options)</code></p>
+              <p><code>.rotateOut(90, 250)</code> or <code>.rotateOut(-90, 500, {ease: "easeOutCubic"})</code> or <code>.rotateOut(-90, 500, { ease: "easeOutCubic", delay: -100 })</code></p>
+              <p>Causes the target object to rotate when it finishes playing.</p>
+              <p>The first parameter is the degrees from which to start the rotation.</p>
+              <p>The second parameter is how many milliseconds the rotation will take.</p>
+              <p>A third options parameter can set the ease of the rotation, and the delay before it ends. E.g. a delay of -500 means the rotation will finish 500ms before the end.</p>
+              <p>Default parameters: <code>{ ease: "linear", delay: 0 }</code></p>
 
               <div class="v-field">
-                <label>Grados
+                <label>Degrees º
                   <input type="number"
                          data-config="degrees"
                          data-type="number"
@@ -914,7 +953,10 @@
               </div>
 
               <div class="v-field">
-                <label>Ease<select data-config="ease">
+                <label>Ease
+                    
+              <p><strong>Note:</strong> The <code>ease</code> parameters are <em>not</em> supported for tokens due to Foundry removing support for it.</p>
+              <p>Check out what easings are available here: <a href="https://easings.net/" target="_blank" rel="noopener">https://easings.net/</a></p><select data-config="ease">
                     <option value="linear"           {{#if (eq node.config.ease "linear")}}selected{{/if}}>linear</option>
                     <option value="easeInSine"       {{#if (eq node.config.ease "easeInSine")}}selected{{/if}}>easeInSine</option>
                     <option value="easeOutSine"      {{#if (eq node.config.ease "easeOutSine")}}selected{{/if}}>easeOutSine</option>
@@ -965,6 +1007,10 @@
           {{#if (eq node.type "tint")}}
             <fieldset class="v-group">
               <legend>Tint</legend>
+              <p><code>.tint()</code> or <code>.tint(hexadecimal)</code> or <code>.tint(decimal)</code></p>
+              <p>Examples:</p>
+              <ul><li><code>.tint("#FF0000")</code> - Red tint</li><li><code>.tint(0x0000FF)</code> - Blue tint</li></ul>
+              <p>This method tints the token or tile with the given color. Supplying no parameter will reset the tint to nothing.</p>
 
               <div class="v-field">
                 <label>Mode
@@ -1000,7 +1046,8 @@
           {{#if (eq node.type "hide")}}
             <fieldset class="v-group">
               <legend>Hide</legend>
-              <p>Este nodo aplica <code>.hide()</code> al target.</p>
+              <p><code>.hide()</code> or <code>.hide(boolean)</code></p>
+              <p>Causes the animated object to be hidden (or visible, if the parameter passed to it is <code>false</code>)</p>
             </fieldset>
           {{/if}}
 
@@ -1008,7 +1055,8 @@
           {{#if (eq node.type "show")}}
             <fieldset class="v-group">
               <legend>Show</legend>
-              <p>Este nodo aplica <code>.show()</code> al target.</p>
+              <p><code>.show()</code> or <code>.show(boolean)</code></p>
+              <p>Causes the animated object to be visible (or hidden, if the parameter passed to it is <code>false</code>)</p>
             </fieldset>
           {{/if}}
 
@@ -1040,15 +1088,18 @@
               <p>This part of the Sequencer acts <strong>on</strong> objects in the scene, such as tokens, tiles, etc, and it can do things like moving tokens, teleporting them, hiding them, fading them out, etc.</p>
               <h3 style="color:white;"><span>How do I use this?</span></a></h3>
               <p>When creating an animation section, you can assemble these methods like this:</p>
-<pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js">new Sequence()
-    .animation()
-    .on()
-    .fadeIn(500)
-    .teleportTo({ x: 100, y: 0})
-.play()</code></pre>
+<pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js">
+<span style="color:#89ddff;">Start / Sequence</span><span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Animation</span> <span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">On</span> <span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Fade</span> (example <span style="color:#ffcb6b">fadeIn: 500ms</span>) <span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Teleport To</span> (example <span style="color:#ffcb6b">x: 100, y: 0</span>) <span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Play</span></code></pre>
 
               <div class="v-field">
                 <label>Preset
+                    <p><code>.preset("name")</code></p>
+                    <p>Applies a preset to the current animation - read the <a href="#/presets">Sequencer Presets article</a> for more information.</p>
                   <input type="text"
                          data-config="preset"
                          value="{{node.config.preset}}">
@@ -1201,6 +1252,8 @@
           {{#if (eq node.type "presetSound")}}
             <fieldset class="v-group">
               <legend>Preset</legend>
+                    <p><code>.preset("name")</code></p>
+                    <p>Applies a preset to the current animation - read the <a href="#/presets">Sequencer Presets article</a> for more information.</p>
               <div class="v-field">
                 <label>Preset name
                   <input type="text"
@@ -1257,6 +1310,8 @@
               <legend>Volume</legend>
               <div class="v-field">
                 <label>Volume (0–1)
+                    <p>A normalized value between <code>0.0</code> and <code>1.0</code> which determines the volume of the sound. Defaults to <code>0.0</code>.</p>
+                    <p><strong>Note:</strong> This is affected by each client’s volume settings in Foundry, so if you or your users cannot hear the sound, double check your Interface Volume.</p>
                   <input type="number"
                          step="0.05" min="0" max="1"
                          data-config="volume"
@@ -1288,9 +1343,9 @@
               <div class="v-field">
                 <label>Mode
                   <select data-config="mode">
-                    <option value="always"  {{#if (eq node.config.mode "always")}}selected{{/if}}>Siempre</option>
-                    <option value="boolean" {{#if (eq node.config.mode "boolean")}}selected{{/if}}>Booleano</option>
-                    <option value="chance"  {{#if (eq node.config.mode "chance")}}selected{{/if}}>Probabilidad</option>
+                    <option value="always"  {{#if (eq node.config.mode "always")}}selected{{/if}}>Always</option>
+                    <option value="boolean" {{#if (eq node.config.mode "boolean")}}selected{{/if}}>Boolean</option>
+                    <option value="chance"  {{#if (eq node.config.mode "chance")}}selected{{/if}}>Chance</option>
                   </select>
                 </label>
               </div>
@@ -1305,7 +1360,7 @@
               </div>
 
               <div class="v-field">
-                <label>Probabilidad (0–1)
+                <label>Chance (0–1)
                   <input type="number"
                          step="0.05" min="0" max="1"
                          data-config="chance"
@@ -1319,7 +1374,14 @@
           {{!-- FADE (Opacity) (child) --}}
           {{#if (eq node.type "fade")}}
             <fieldset class="v-group">
-              <legend>Fade (Opacity)</legend>
+              <legend>Fade (Visual)</legend>
+              <p><code>.fadeIn(duration, options)</code></p>
+              <p><code>.fadeIn(500)</code> or <code>.fadeIn(250, { ease: "easeOutQuint" })</code> or <code>.fadeIn(400, { ease: "easeOutCirc", delay: 100 })</code></p>
+              <p>Causes the animation target to fade in its opacity/alpha when played.</p>
+              <p>A second options parameter can set the ease of the fade, and the delay before it starts.</p>
+              <p>Default parameters: <code>{ ease: "linear", delay: 0 }</code></p>
+              <p><strong>Note:</strong> The <code>ease</code> parameters are <em>not</em> supported for tokens due to Foundry removing support for it.</p>
+              <p>Check out what easings are available here: <a href="https://easings.net/" target="_blank" rel="noopener">https://easings.net/</a></p>
 
               {{> v-fade-direction
                   label="Fade In"
@@ -1330,6 +1392,13 @@
 
               <hr>
 
+            <p><code>.fadeOut(duration, options)</code></p>
+            <p><code>.fadeOut(500)</code> or <code>.fadeOut(250, { ease: "easeOutQuint" })</code> or <code>.fadeOut(400, { ease: "easeOutCirc", delay: -100 })</code></p>
+            <p>Causes the animation target to fade out its opacity/alpha when it has finished playing.</p>
+            <p>A second options parameter can set the ease of the fade, and a delay before it ends. E.g. a delay of -500 means the fade will finish 500ms before the end.</p>
+            <p>Default parameters: <code>{ ease: "linear", delay: 0 }</code></p>
+            <p><strong>Note:</strong> The <code>ease</code> parameters are <em>not</em> supported for tokens due to Foundry removing support for it.</p>
+            <p>Check out what easings are available here: <a href="https://easings.net/" target="_blank" rel="noopener">https://easings.net/</a></p>
               {{> v-fade-direction
                   label="Fade Out"
                   durKey="fadeOutDuration"
@@ -1343,6 +1412,12 @@
           {{#if (eq node.type "fadeAudio")}}
             <fieldset class="v-group">
               <legend>Fade (Audio)</legend>
+              <p><code>.fadeInAudio(duration, options)</code></p>
+              <p><code>.fadeInAudio(500)</code> or <code>.fadeInAudio(250, { ease: "easeOutQuint" })</code> or <code>.fadeInAudio(400, { ease: "easeOutCirc", delay: 100 })</code></p>
+              <p>Causes the audio on the given section fade in when played.</p>
+              <p>A second options parameter can set the ease of the fade, and the delay before it starts.</p>
+              <p>Default parameters: <code>{ ease: "linear", delay: 0 }</code></p>
+              <p>Check out what easings are available here: <a href="https://easings.net/" target="_blank" rel="noopener">https://easings.net/</a></p>
 
               {{> v-fade-direction
                   label="Fade In audio"
@@ -1352,6 +1427,12 @@
                   config=node.config}}
 
               <hr>
+              <p><code>.fadeOutAudio(duration, options)</code></p>
+              <p><code>.fadeOutAudio(500)</code> or <code>.fadeOutAudio(250, { ease: "easeOutQuint" })</code> or <code>.fadeOutAudio(400, { ease: "easeOutCirc", delay: -100 })</code></p>
+              <p>Causes the section to fade out its audio as it finishes playing.</p>
+              <p>A second options parameter can set the ease of the fade, and a delay before it ends. E.g. a delay of -500 means the fade will finish 500ms before the end.</p>
+              <p>Default parameters: <code>{ ease: "linear", delay: 0 }</code></p>
+              <p>Check out what easings are available here: <a href="https://easings.net/" target="_blank" rel="noopener">https://easings.net/</a></p>
 
               {{> v-fade-direction
                   label="Fade Out audio"
