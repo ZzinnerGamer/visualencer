@@ -207,7 +207,6 @@ class VisualencerCompiler {
 
         flushBlock();
 
-        // === Cada scrollingText debe tener texto suyo o de un text hijo ===
         for (const [id, node] of Object.entries(graph.nodes)) {
             if (node.type !== "scrollingText") continue;
 
@@ -422,7 +421,6 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
         if (portOut) {
             portOut.onmousedown = (event) => {
                 if (event.button === 2) {
-                    // click derecho: eliminar enlaces "from" este nodo
                     event.preventDefault();
                     event.stopPropagation();
                     this._deleteLinksFrom(id);
@@ -618,7 +616,6 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     const fromId = this._linkDrag.fromId;
 
-    // limpiar línea temporal
     if (this._linkDrag.tempPath && this._linkDrag.tempPath.parentNode) {
         this._linkDrag.tempPath.parentNode.removeChild(this._linkDrag.tempPath);
     }
@@ -628,11 +625,9 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const clientX = native.clientX;
     const clientY = native.clientY;
 
-    // Elemento real bajo el cursor
     const el = document.elementFromPoint(clientX, clientY);
     if (!el) return;
 
-    // 1) Soltar sobre puerto IN → conectar
     const portInEl = el.closest?.(".v-port-in");
     if (portInEl) {
         const nodeEl = portInEl.closest(".v-node");
@@ -645,11 +640,9 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
         }
     }
 
-    // 2) Soltar sobre cualquier nodo → no abrir menú
     const nodeEl = el.closest?.(".v-node");
     if (nodeEl) return;
 
-    // 3) Fondo: abrir menú de creación conectado
     this._showContextMenu(ev, { fromId });
   }
 
@@ -749,7 +742,6 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const size = base * zoom;
     $canvas.css("background-size", `${size}px ${size}px`);
 
-    // mover también el origen del grid
     $canvas.css("background-position", `${panX}px ${panY}px`);
 
     this._drawConnections();
@@ -845,7 +837,6 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const graphX = (xCanvas - (this._panX || 0)) / zoom;
     const graphY = (yCanvas - (this._panY || 0)) / zoom;
 
-    // click derecho normal en fondo: sin fromId
     this._showContextMenuAt(graphX, graphY, { fromId });
   }
 
@@ -855,10 +846,8 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
   const $canvas = $app.find(".visualencer-canvas");
   if (!$canvas.length) return;
 
-  // Elimina cualquier menú previo
   $canvas.find(".v-node-picker").remove();
 
-  // ===== Filtrado de tipos según fromId =====
   const allTypes = VisualencerNodeTypes.all();
   let filtered = allTypes;
 
