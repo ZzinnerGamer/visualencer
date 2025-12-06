@@ -1,7 +1,7 @@
 {
   "id": "visualencer",
   "title": "Visualencer - A Sequencer visual scripting module",
-  "version": "#{VERSION}#",
+  "version": "1.0.0",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
@@ -15,6 +15,16 @@
   "styles": [
     "styles/visualencer.css"
   ],
+  "languages": [
+    {
+      "lang": "en",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "es",
+      "path": "lang/es.json"
+    }
+  ],
   "relationships": {
     "requires": [
       {
@@ -24,8 +34,5 @@
       }
     ]
   },
-  "description": "",
-  "url": "#{URL}#",
-  "manifest": "#{MANIFEST}#",
-  "download": "#{DOWNLOAD}#"
+  "description": ""
 }
