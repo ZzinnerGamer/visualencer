@@ -147,34 +147,34 @@ VisualencerNodeTypes.register("animation", {
  * ======================= */
 
 VisualencerNodeTypes.register("scrollingText", {
-  label: "ScrollingText",
-  category: "sequencer",
-  role: "root",
-  family: "scrollingText",
-  createConfig() {
-    return {
-      text: "Texto",
-      at: "selected-token",
-      durationMs: 1000
-    };
-  },
-  compileRoot(node, block, _ctx) {
-    const c = node.config || {};
-    const lines = block.lines;
+    label: "ScrollingText",
+    category: "sequencer",
+    role: "root",
+    family: "scrollingText",
+    createConfig() {
+        return {
+            text: "Texto",
+            at: "selected-token",
+            durationMs: 1000
+        };
+    },
+    compileRoot(node, block, _ctx) {
+        const c = node.config || {};
+        const lines = block.lines;
 
-    lines.push("seq.scrollingText()");
+        lines.push("seq.scrollingText()");
 
-    if (c.at === "selected-token") {
-      lines.push("  .atLocation(canvas.tokens.controlled[0])");
+        if (c.at === "selected-token") {
+            lines.push("  .atLocation(canvas.tokens.controlled[0])");
+        }
+
+        const text = (c.text || "").replace(/`/g, "\\`");
+        lines.push(`  .text(\`${text}\`)`);
+
+        if (c.durationMs && Number(c.durationMs) > 0) {
+            lines.push(`  .duration(${Number(c.durationMs)})`);
+        }
     }
-
-    const text = (c.text || "").replace(/`/g, "\\`");
-    lines.push(`  .text(\`${text}\`)`);
-
-    if (c.durationMs && Number(c.durationMs) > 0) {
-      lines.push(`  .duration(${Number(c.durationMs)})`);
-    }
-  }
 });
 
 VisualencerNodeTypes.register("direction", {
@@ -2135,15 +2135,67 @@ VisualencerNodeTypes.register("filter", {
 });
 
 VisualencerNodeTypes.register("text", {
-  label: "Text",
-  category: "effect",
-  role: "child",
-  families: ["effect","scrollingText"],
-  createConfig() { return { text: "Texto", style: "{\\n  \"fill\": \"white\"\\n}" }; },
-  compileChild(node, block, _ctx) {
-    const text = node.config?.text || "";
-    block.lines.push(`  .text(\`${text.replace(/`/g, "\\`")}\`, ${node.config?.style || "{}"})`);
-  }
+    label: "Text",
+    category: "effect",
+    role: "child",
+    families: ["effect", "scrollingText"],
+    createConfig() {
+        return {
+            text: "My Text",
+            style: "{\n  \"fill\": \'white\',\n  \"fontFamily\": \'Arial\',\n  \"fontSize\": 32\n}"
+        };
+    },
+    compileChild(node, block, ctx) {
+        ctx.styles = ctx.styles || [];
+        ctx.styleCounter = (ctx.styleCounter || 0) + 1;
+
+        const styleVar = `style${ctx.styleCounter}`;
+
+        let styleSource = node.config?.style;
+        if (!styleSource || !String(styleSource).trim()) {
+            styleSource = "{}";
+        }
+        ctx.styles.push({
+            name: styleVar,
+            value: styleSource
+        });
+
+        const nodeTextRaw = (node.config?.text ?? "").toString();
+        const nodeText = nodeTextRaw.trim();
+
+        const lines = block.lines || [];
+
+        let rootText = "";
+        let textLineIndex = -1;
+
+        textLineIndex = lines.findIndex(l => l.trim().startsWith(".text("));
+        if (textLineIndex !== -1) {
+            const m = lines[textLineIndex].match(/\.text\(`(.*)`\)/);
+            if (m) {
+                rootText = m[1];
+            }
+        }
+
+        // Reglas:
+        // - Si el nodo Text tiene texto → usar ese
+        // - Si no, pero el root tenía texto → usar el del root
+        // - Si ninguno tiene texto → finalText vacío ( la validación global ya habrá decidido si debe dar error)
+        const rawFinal = nodeText || rootText;
+        const finalText = rawFinal.trim();
+
+        if (!finalText) {
+            return;
+        }
+
+        const safeText = finalText.replace(/`/g, "\\`");
+        const newLine = `  .text(\`${safeText}\`, ${styleVar})`;
+
+        if (textLineIndex !== -1) {
+            lines[textLineIndex] = newLine;
+        } else {
+            lines.push(newLine);
+        }
+    }
 });
 
 VisualencerNodeTypes.register("shape", {
@@ -3127,18 +3179,6 @@ VisualencerNodeTypes.register("filter", {
     const name = (node.config?.filter || "").trim();
     if (!name) return;
     block.lines.push(`  .filter("${VHelpers.esc(name)}", ${node.config.options || "{}"})`);
-  }
-});
-
-VisualencerNodeTypes.register("text", {
-  label: "Text",
-  category: "effect",
-  role: "child",
-  families: ["effect"],
-  createConfig() { return { text: "Texto", style: "{\\n  \"fill\": \"white\"\\n}" }; },
-  compileChild(node, block, _ctx) {
-    const text = node.config?.text || "";
-    block.lines.push(`  .text(\`${text.replace(/`/g, "\\`")}\`, ${node.config?.style || "{}"})`);
   }
 });
 
