@@ -226,7 +226,7 @@ class VisualencerCompiler {
 
             if (!scrollText && !hasChildText) {
                 throw new Error(
-                    "Hay un nodo ScrollingText sin texto: debes escribir texto en el propio nodo ScrollingText o en al menos un nodo Text hijo."
+                    game.iu18n.localize("VISUALENCER.NodeText.NoText")
                 );
             }
         }
