@@ -686,7 +686,7 @@ VisualencerNodeTypes.register("atLocation", {
   families: ["effect", "animation", "sound","scrollingText"],
   createConfig() {
     return {
-      mode: "selected-token", // selected-token | selected-target | token-id | token-name | tile-id | point
+      mode: "selected-token",
       tokenId: "",
       tokenName: "",
       tileId: "",
@@ -1027,7 +1027,7 @@ VisualencerNodeTypes.register("on", {
   families: ["animation", "effect"],
   createConfig() {
     return {
-      mode: "inToken", // inToken | inTile | token-id | tile-id | point
+      mode: "inToken",
       tokenId: "",
       tileId: "",
       x: 0,
@@ -1163,7 +1163,7 @@ VisualencerNodeTypes.register("rotateTowards", {
   families: ["animation","effect"],
   createConfig() {
     return {
-      mode: "inToken", // inToken | inTile | point | token-id | tile-id
+      mode: "inToken",
       tokenId: "",
       tileId: "",
       x: 0,
@@ -1225,7 +1225,7 @@ VisualencerNodeTypes.register("teleportTo", {
   families: ["animation"],
   createConfig() {
     return {
-      mode: "inToken", // inToken | inTile | point | token-id | tile-id
+      mode: "inToken",
       tokenId: "",
       tileId: "",
       x: 0,
@@ -1383,7 +1383,7 @@ VisualencerNodeTypes.register("tint", {
   families: ["animation","effect"],
   createConfig() {
     return {
-      mode: "none", // none | reset | hex | decimal
+      mode: "none",
       hex: "",
       dec: ""
     };
@@ -1462,7 +1462,7 @@ VisualencerNodeTypes.register("copySprite", {
   families: ["effect"],
   createConfig() {
     return {
-      mode: "selected-token", // selected-token | selected-tile | token-id | tile-id
+      mode: "selected-token",
       tokenId: "",
       tileId: "",
       cacheLocation: false,
@@ -1504,7 +1504,7 @@ VisualencerNodeTypes.register("attachTo", {
   families: ["effect"],
   createConfig() {
     return {
-      mode: "selected-token", // selected-token | token-id | token-name | template | name
+      mode: "selected-token",
       tokenId: "",
       tokenName: "",
       storedName: "",
@@ -1560,7 +1560,7 @@ VisualencerNodeTypes.register("stretchTo", {
   families: ["effect"],
   createConfig() {
     return {
-      mode: "selected-target", // selected-target | token-id | tile-id | point | name
+      mode: "selected-target",
       tokenId: "",
       tileId: "",
       x: 0,
@@ -2509,7 +2509,7 @@ VisualencerNodeTypes.register("copySprite", {
   families: ["effect"],
   createConfig() {
     return {
-      mode: "selected-token", // selected-token | selected-tile | token-id | tile-id
+      mode: "selected-token", 
       tokenId: "",
       tileId: "",
       cacheLocation: false,
@@ -2551,7 +2551,7 @@ VisualencerNodeTypes.register("attachTo", {
   families: ["effect"],
   createConfig() {
     return {
-      mode: "selected-token", // selected-token | token-id | token-name | template | name
+      mode: "selected-token", 
       tokenId: "",
       tokenName: "",
       storedName: "",
@@ -2607,7 +2607,7 @@ VisualencerNodeTypes.register("stretchTo", {
   families: ["effect"],
   createConfig() {
     return {
-      mode: "selected-target", // selected-target | token-id | tile-id | point | name
+      mode: "selected-target", 
       tokenId: "",
       tileId: "",
       x: 0,
