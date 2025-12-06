@@ -132,89 +132,120 @@ class VisualencerGraph {
  * ======================= */
 
 class VisualencerCompiler {
-  static compile(graph, options = {}) {
-    const order = graph.linearOrder();
-    const ctx = {
-      lines: []
-    };
-
-    let block = null;
-
-    const flushBlock = () => {
-      if (!block) return;
-      const lines = block.lines || [];
-      if (lines.length) {
-        const lastIndex = lines.length - 1;
-        const lastLine = lines[lastIndex];
-        if (!lastLine.trimEnd().endsWith(";")) {
-          lines[lastIndex] = lastLine + ";";
-        }
-        ctx.lines.push(...lines);
-      }
-      block = null;
-    };
-
-    for (const node of order) {
-      const def = VisualencerNodeTypes.get(node.type);
-      if (!def) continue;
-
-      const role = def.role || "legacy";
-
-      if (role === "root") {
-        flushBlock();
-
-        block = {
-          family: def.family || node.type,
-          nodeId: node.id,
-          lines: []
+    static compile(graph, options = {}) {
+        const order = graph.linearOrder();
+        const ctx = {
+            lines: [],
+            styles: [],
+            styleCounter: 0
         };
 
-        if (typeof def.compileRoot === "function") {
-          def.compileRoot(node, block, ctx);
-        } else if (typeof def.compile === "function") {
-          def.compile(node, ctx);
-          block = null;
+        let block = null;
+
+        const flushBlock = () => {
+            if (!block) return;
+            const lines = block.lines || [];
+            if (lines.length) {
+                const lastIndex = lines.length - 1;
+                const lastLine = lines[lastIndex];
+                if (!lastLine.trimEnd().endsWith(";")) {
+                    lines[lastIndex] = lastLine + ";";
+                }
+                ctx.lines.push(...lines);
+            }
+            block = null;
+        };
+
+        for (const node of order) {
+            const def = VisualencerNodeTypes.get(node.type);
+            if (!def) continue;
+
+            const role = def.role || "legacy";
+
+            if (role === "root") {
+                flushBlock();
+
+                block = {
+                    family: def.family || node.type,
+                    nodeId: node.id,
+                    lines: []
+                };
+
+                if (typeof def.compileRoot === "function") {
+                    def.compileRoot(node, block, ctx);
+                } else if (typeof def.compile === "function") {
+                    def.compile(node, ctx);
+                    block = null;
+                }
+
+                continue;
+            }
+
+            if (role === "child") {
+                if (!block) continue;
+
+                const families = def.families || def.family || null;
+                if (families) {
+                    const famList = Array.isArray(families) ? families : [families];
+                    if (!famList.includes(block.family)) continue;
+                }
+
+                if (typeof def.compileChild === "function") {
+                    def.compileChild(node, block, ctx);
+                } else if (typeof def.compile === "function") {
+                    def.compile(node, block, ctx);
+                }
+
+                continue;
+            }
+
+            flushBlock();
+            if (typeof def.compile === "function") {
+                def.compile(node, ctx);
+            }
         }
 
-        continue;
-      }
+        flushBlock();
 
-      if (role === "child") {
-        if (!block) continue;
+        // === Cada scrollingText debe tener texto suyo o de un text hijo ===
+        for (const [id, node] of Object.entries(graph.nodes)) {
+            if (node.type !== "scrollingText") continue;
 
-        const families = def.families || def.family || null;
-        if (families) {
-          const famList = Array.isArray(families) ? families : [families];
-          if (!famList.includes(block.family)) {
-            continue;
-          }
+            const scrollText = (node.config?.text || "").trim();
+
+            const children = Object.values(graph.nodes).filter(n =>
+                graph.connections.some(c => c.from === id && c.to === n.id)
+            );
+
+            const textChildren = children.filter(n => n.type === "text");
+
+            const hasChildText = textChildren.some(n => {
+                const t = (n.config?.text || "").trim();
+                return t.length > 0;
+            });
+
+            if (!scrollText && !hasChildText) {
+                throw new Error(
+                    "Hay un nodo ScrollingText sin texto: debes escribir texto en el propio nodo ScrollingText o en al menos un nodo Text hijo."
+                );
+            }
         }
 
-        if (typeof def.compileChild === "function") {
-          def.compileChild(node, block, ctx);
-        } else if (typeof def.compile === "function") {
-          def.compile(node, block, ctx);
+        const macroName = options.name || "Visualencer Macro";
+        const body = ctx.lines.join("\n  ");
+
+        let stylesHeader = "";
+        if (ctx.styles.length) {
+            stylesHeader =
+                ctx.styles
+                    .map(s => `const ${s.name} = ${s.value || "{}"};`)
+                    .join("\n") + "\n\n";
         }
 
-        continue;
-      }
-
-      flushBlock();
-
-      if (typeof def.compile === "function") {
-        def.compile(node, ctx);
-      }
-    }
-
-    flushBlock();
-
-    const macroName = options.name || "Visualencer Macro";
-    const body = ctx.lines.join("\n  ");
-
-    const code = `// Macro generated by Visualencer
-// Requires the “Sequencer” module
-if (!game.modules.get(“sequencer”)?.active) {
-  ui.notifications.error(“Visualencer: the Sequencer module is not active.”);
+        const code = `// Macro generated by Visualencer
+// Requires the "Sequencer" module
+${stylesHeader}if (!game.modules.get("sequencer")?.active) {
+  ui.notifications.error("Visualencer: the Sequencer module is not active.");
   return;
 }
 
@@ -226,24 +257,25 @@ if (!game.modules.get(“sequencer”)?.active) {
   await seq.play();
 })();`;
 
-    return { code, name: macroName };
-  }
+        return { code, name: macroName };
+    }
 
-  static async createMacro(graph, options = {}) {
-    const { code, name } = this.compile(graph, options);
+    static async createMacro(graph, options = {}) {
+        const { code, name } = this.compile(graph, options);
 
-    const macro = await Macro.create({
-      name,
-      type: "script",
-      command: code,
-      img: "icons/svg/explosion.svg",
-      scope: "global"
-    });
+        const macro = await Macro.create({
+            name,
+            type: "script",
+            command: code,
+            img: "icons/svg/explosion.svg",
+            scope: "global"
+        });
 
-    ui.notifications.info(`Visualencer: Macro "${macro.name}" created.`);
-    return macro;
-  }
+        ui.notifications.info(`Visualencer: Macro "${macro.name}" created.`);
+        return macro;
+    }
 }
+
 
 /* =========================
  * Application UI
@@ -297,21 +329,31 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     this._panning = null;
 
     this._linkDrag = null;
-  }
+
+    this._zoom = 1;
+
+    this._gridSize = 40;
+    this._gridBase = 40;
+}
 
   async _prepareContext(_options) {
     return {
       graph: this.graph.toJSON(),
       nodeTypes: VisualencerNodeTypes.all(),
       panX: this._panX || 0,
-      panY: this._panY || 0
+      panY: this._panY || 0,
+      zoom: this._zoom || 1
     };
   }
 
   async _onRender(context, options) {
     await super._onRender(context, options);
     this._activateListeners();
+    this._updateCanvasTransform();
   }
+
+
+
 
   _activateListeners() {
     const root = this.element;
@@ -345,6 +387,7 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const $canvas = $root.find(".visualencer-canvas");
     $canvas.on("mousedown.visualencer", (ev) => this._onCanvasMouseDown(ev));
     $canvas.on("contextmenu.visualencer", (ev) => this._onCanvasContext(ev));
+    $canvas.on("wheel.visualencer", (ev) => this._onCanvasWheel(ev));
 
     root.querySelectorAll(".v-node").forEach((nodeEl) => {
       const nodeId = nodeEl.dataset.nodeId;
@@ -371,21 +414,37 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
           input.onchange = (event) => this._onConfigChange(event, nodeId);
         });
 
-      const portOut = nodeEl.querySelector(".v-port-out");
-      const portIn = nodeEl.querySelector(".v-port-in");
+      for (const [id, node] of Object.entries(this.graph.nodes)) {
+        const $node = $root.find(`.v-node[data-node-id="${id}"]`);
+        const portOut = $node.find(".v-port-out")[0];
+        const portIn = $node.find(".v-port-in")[0];
 
-      if (portOut) {
-        portOut.onmousedown = (event) => {
-          this._onPortOutMouseDown(event, nodeId);
-        };
-      }
+        if (portOut) {
+            portOut.onmousedown = (event) => {
+                if (event.button === 2) {
+                    // click derecho: eliminar enlaces "from" este nodo
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this._deleteLinksFrom(id);
+                    return;
+                }
+                if (event.button !== 0) return;
+                event.preventDefault();
+                this._onPortOutMouseDown(id, event);
+            };
+        }
 
-      if (portIn) {
-        portIn.onclick = (event) => {
-          event.preventDefault();
-          this._onPortInClick(nodeId);
-        };
-      }
+        if (portIn) {
+            portIn.onmousedown = (event) => {
+                if (event.button === 2) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this._deleteLinksTo(id);
+                    return;
+                }
+            };
+        }
+    }
     });
 
     this._drawConnections();
@@ -425,21 +484,31 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const node = this.graph.nodes[d.nodeId];
     if (!node) return;
 
-    const dx = ev.clientX - d.startX;
-    const dy = ev.clientY - d.startY;
+    const zoom = this._zoom || 1;
 
-    node.x = d.origX + dx;
-    node.y = d.origY + dy;
+    const dx = (ev.clientX - d.startX) / zoom;
+    const dy = (ev.clientY - d.startY) / zoom;
+
+    let x = d.origX + dx;
+    let y = d.origY + dy;
+
+    const grid = this._gridSize || 40;
+    x = Math.round(x / grid) * grid;
+    y = Math.round(y / grid) * grid;
+
+    node.x = x;
+    node.y = y;
 
     const $app = $(this.element);
     const $node = $app.find(`.v-node[data-node-id="${d.nodeId}"]`);
     $node.css({
-      left: `${node.x}px`,
-      top: `${node.y}px`
+        left: `${node.x}px`,
+        top: `${node.y}px`
     });
 
     this._drawConnections();
   }
+
 
   async _onNodeDragEnd(_event, move, up) {
     if (!this._dragging) return;
@@ -451,7 +520,9 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     await this.graph.save();
   }
 
-  _onPortOutMouseDown(event, nodeId) {
+  
+
+  _onPortOutMouseDown(nodeId, event) {
     if (event.button !== 0) return;
 
     event.preventDefault();
@@ -470,8 +541,70 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     document.addEventListener("mouseup", up);
   }
 
-  _onLinkDragMove(_ev) {
-    // dibujado del cable
+  _onLinkDragMove(ev) {
+    if (!this._linkDrag || !this.element) return;
+
+    const fromId = this._linkDrag.fromId;
+    const $app = $(this.element);
+    const $canvas = $app.find(".visualencer-canvas");
+    const $svg = $canvas.find("svg.v-connections");
+    if (!$svg.length) return;
+
+    const canvasOffset = $canvas.offset();
+    if (!canvasOffset) return;
+
+    const $fromPort = $canvas.find(
+        `.v-node[data-node-id="${fromId}"] .v-port-out`
+    );
+    if (!$fromPort.length) return;
+
+    const fromOffset = $fromPort.offset();
+    if (!fromOffset) return;
+
+    const x1 = fromOffset.left - canvasOffset.left + $fromPort.outerWidth() / 2;
+    const y1 = fromOffset.top - canvasOffset.top + $fromPort.outerHeight() / 2;
+
+    const native = ev.originalEvent || ev;
+    const x2 = native.clientX - canvasOffset.left;
+    const y2 = native.clientY - canvasOffset.top;
+
+    const dx = Math.abs(x2 - x1);
+    const c1x = x1 + dx / 2;
+    const c2x = x2 - dx / 2;
+
+    const dPath = `M ${x1} ${y1} C ${c1x} ${y1} ${c2x} ${y2} ${x2} ${y2}`;
+
+    let path = this._linkDrag.tempPath;
+    if (!path) {
+        const ns = "http://www.w3.org/2000/svg";
+        path = document.createElementNS(ns, "path");
+        path.setAttribute("class", "v-connection v-connection-temp");
+        $svg[0].appendChild(path);
+        this._linkDrag.tempPath = path;
+    }
+
+    path.setAttribute("d", dPath);
+  }
+
+
+  _deleteLinksFrom(nodeId) {
+    const conns = this.graph.connections || [];
+    const remaining = conns.filter(c => c.from !== nodeId);
+    if (remaining.length === conns.length) return;
+
+    this.graph.connections = remaining;
+    this.graph.save();
+    this.render(false);
+  }
+
+  _deleteLinksTo(nodeId) {
+    const conns = this.graph.connections || [];
+    const remaining = conns.filter(c => c.to !== nodeId);
+    if (remaining.length === conns.length) return;
+
+    this.graph.connections = remaining;
+    this.graph.save();
+    this.render(false);
   }
 
   async _onLinkDragEnd(ev, move, up) {
@@ -484,23 +617,43 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     ev.stopPropagation();
 
     const fromId = this._linkDrag.fromId;
+
+    // limpiar línea temporal
+    if (this._linkDrag.tempPath && this._linkDrag.tempPath.parentNode) {
+        this._linkDrag.tempPath.parentNode.removeChild(this._linkDrag.tempPath);
+    }
     this._linkDrag = null;
 
-    const target = ev.target;
-    const portInEl = target.closest?.(".v-port-in");
+    const native = ev.originalEvent || ev;
+    const clientX = native.clientX;
+    const clientY = native.clientY;
+
+    // Elemento real bajo el cursor
+    const el = document.elementFromPoint(clientX, clientY);
+    if (!el) return;
+
+    // 1) Soltar sobre puerto IN → conectar
+    const portInEl = el.closest?.(".v-port-in");
     if (portInEl) {
-      const nodeEl = portInEl.closest(".v-node");
-      const toId = nodeEl?.dataset.nodeId;
-      if (toId && toId !== fromId) {
-        this.graph.connect(fromId, toId);
-        await this.graph.save();
-        this.render(false);
-        return;
-      }
+        const nodeEl = portInEl.closest(".v-node");
+        const toId = nodeEl?.dataset.nodeId;
+        if (toId && toId !== fromId) {
+            this.graph.connect(fromId, toId);
+            await this.graph.save();
+            this.render(false);
+            return;
+        }
     }
 
+    // 2) Soltar sobre cualquier nodo → no abrir menú
+    const nodeEl = el.closest?.(".v-node");
+    if (nodeEl) return;
+
+    // 3) Fondo: abrir menú de creación conectado
     this._showContextMenu(ev, { fromId });
   }
+
+
 
   _drawConnections() {
     if (!this.element) return;
@@ -580,6 +733,28 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     );
   }
 
+  _updateCanvasTransform() {
+    if (!this.element) return;
+    const $app = $(this.element);
+    const $inner = $app.find(".v-canvas-inner");
+    const $canvas = $app.find(".visualencer-canvas");
+
+    const zoom = this._zoom || 1;
+    const panX = this._panX || 0;
+    const panY = this._panY || 0;
+
+    $inner.css("transform", `translate(${panX}px, ${panY}px) scale(${zoom})`);
+
+    const base = this._gridBase || this._gridSize || 40;
+    const size = base * zoom;
+    $canvas.css("background-size", `${size}px ${size}px`);
+
+    // mover también el origen del grid
+    $canvas.css("background-position", `${panX}px ${panY}px`);
+
+    this._drawConnections();
+  }
+
   _onCanvasPanMove(ev) {
     if (!this._panning) return;
 
@@ -587,12 +762,41 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     this._panX = d.origPanX + (ev.clientX - d.startX);
     this._panY = d.origPanY + (ev.clientY - d.startY);
 
-    const $app = $(this.element);
-    const $inner = $app.find(".v-canvas-inner");
-    $inner.css("transform", `translate(${this._panX}px, ${this._panY}px)`);
-
-    this._drawConnections();
+    this._updateCanvasTransform();
   }
+
+  _onCanvasWheel(ev) {
+    ev.preventDefault();
+
+    const native = ev.originalEvent || ev;
+    const delta = native.deltaY || 0;
+
+    const prevZoom = this._zoom || 1;
+    let zoom = prevZoom;
+
+    const factor = 1.1;
+
+    if (delta < 0) zoom *= factor;
+    else if (delta > 0) zoom /= factor;
+
+    zoom = Math.max(0.3, Math.min(2.5, zoom));
+
+    const $app = $(this.element);
+    const $canvas = $app.find(".visualencer-canvas");
+    const canvasOffset = $canvas.offset();
+    if (canvasOffset) {
+        const mx = native.clientX - canvasOffset.left;
+        const my = native.clientY - canvasOffset.top;
+
+        const scale = zoom / prevZoom;
+        this._panX = mx - scale * (mx - this._panX);
+        this._panY = my - scale * (my - this._panY);
+    }
+
+    this._zoom = zoom;
+    this._updateCanvasTransform();
+  }
+
 
   _onCanvasPanEnd(_ev) {
     if (!this._panning) return;
@@ -602,6 +806,11 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   _onCanvasContext(ev) {
     ev.preventDefault();
+
+    const target = ev.target;
+    if (target.closest?.(".v-node")) {
+        return;
+    }
 
     const $target = $(ev.target);
 
@@ -616,80 +825,144 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   _showContextMenu(ev, { fromId } = {}) {
-    if (!this.element) return;
+    ev.preventDefault();
+    ev.stopPropagation();
 
+    if (!this.element) return;
     const $app = $(this.element);
     const $canvas = $app.find(".visualencer-canvas");
-
-    $canvas.find(".v-context-menu").remove();
-
     const canvasOffset = $canvas.offset();
     if (!canvasOffset) return;
 
-    const xCanvas = ev.clientX - canvasOffset.left;
-    const yCanvas = ev.clientY - canvasOffset.top;
+    const native = ev.originalEvent || ev;
+    const clientX = native.clientX;
+    const clientY = native.clientY;
 
-    const graphX = xCanvas - (this._panX || 0);
-    const graphY = yCanvas - (this._panY || 0);
+    const xCanvas = clientX - canvasOffset.left;
+    const yCanvas = clientY - canvasOffset.top;
 
-    const $menu = $(`
-      <div class="v-context-menu">
-        <input type="text" class="v-context-search" placeholder="Create node...">
-        <ul class="v-context-list"></ul>
-      </div>
-    `).appendTo($canvas);
+    const zoom = this._zoom || 1;
+    const graphX = (xCanvas - (this._panX || 0)) / zoom;
+    const graphY = (yCanvas - (this._panY || 0)) / zoom;
 
-    $menu.css({
-      left: xCanvas,
-      top: yCanvas
-    });
-
-    const $list = $menu.find(".v-context-list");
-    const types = VisualencerNodeTypes.all();
-
-    for (const t of types) {
-      const $li = $(`<li data-type="${t.type}">${t.label}</li>`);
-      $list.append($li);
-    }
-
-    const $search = $menu.find(".v-context-search");
-    $search.on("input", () => {
-      const term = ($search.val() || "").toString().toLowerCase();
-      $list.children("li").each(function () {
-        const $li = $(this);
-        const txt = $li.text().toLowerCase();
-        $li.toggle(txt.includes(term));
-      });
-    });
-    $search.trigger("focus");
-
-    $list.on("click", "li", async (e2) => {
-      const type = $(e2.currentTarget).data("type");
-      await this._createNodeFromContext(type, graphX, graphY, { fromId });
-      $menu.remove();
-      $(document).off(".visualencerContext");
-    });
-
-    const closeMenu = () => {
-      $menu.remove();
-      $(document).off(".visualencerContext");
-    };
-
-    $(document).on("mousedown.visualencerContext", (eDoc) => {
-      if (!$(eDoc.target).closest(".v-context-menu").length) {
-        closeMenu();
-      }
-    });
-
-    $(document).on("keydown.visualencerContext", (eDoc) => {
-      if (eDoc.key === "Escape") {
-        closeMenu();
-      }
-    });
+    // click derecho normal en fondo: sin fromId
+    this._showContextMenuAt(graphX, graphY, { fromId });
   }
 
+  _showContextMenuAt(graphX, graphY, { fromId } = {}) {
+  if (!this.element) return;
+  const $app = $(this.element);
+  const $canvas = $app.find(".visualencer-canvas");
+  if (!$canvas.length) return;
+
+  // Elimina cualquier menú previo
+  $canvas.find(".v-node-picker").remove();
+
+  // ===== Filtrado de tipos según fromId =====
+  const allTypes = VisualencerNodeTypes.all();
+  let filtered = allTypes;
+
+  if (fromId) {
+    const fromNode = this.graph.nodes[fromId];
+    if (fromNode) {
+      const fromDef = VisualencerNodeTypes.get(fromNode.type);
+      const fromFamily = fromDef?.family || null;
+
+      if (fromFamily) {
+        filtered = allTypes.filter((t) => {
+          const role = t.role || "legacy";
+          if (role === "root") return false;
+
+          const fams = t.families || t.family || null;
+          if (!fams) return false;
+          const list = Array.isArray(fams) ? fams : [fams];
+          return list.includes(fromFamily);
+        });
+
+        if (!filtered.length) filtered = allTypes;
+      }
+    }
+  }
+
+  // ===== Construir HTML del menú =====
+  const itemsHtml = filtered
+    .map(t => `<li data-type="${t.type}">${foundry.utils.escapeHTML(t.label)}</li>`)
+    .join("");
+
+  const $menu = $(`
+    <div class="v-node-picker">
+      <input type="text" class="v-node-search" placeholder="Buscar nodo..." />
+      <ul class="v-context-list">
+        ${itemsHtml}
+      </ul>
+    </div>
+  `);
+
+  $canvas.append($menu);
+
+  // ===== Posicionar dentro del canvas usando graphX/graphY =====
+  const zoom = this._zoom || 1;
+  let xCanvas = graphX * zoom + (this._panX || 0);
+  let yCanvas = graphY * zoom + (this._panY || 0);
+
+  const pickerWidth = 260;
+  const pickerHeight = 320;
+
+  const canvasRect = $canvas[0].getBoundingClientRect();
+  const maxX = canvasRect.width - pickerWidth;
+  const maxY = canvasRect.height - pickerHeight;
+
+  xCanvas = Math.max(0, Math.min(xCanvas, maxX));
+  yCanvas = Math.max(0, Math.min(yCanvas, maxY));
+
+  $menu.css({
+    position: "absolute",
+    left: `${xCanvas}px`,
+    top: `${yCanvas}px`
+  });
+
+  // ===== Cerrar al pinchar fuera =====
+  const onDocMouseDown = (ev) => {
+    if (ev.target.closest(".v-node-picker")) return;
+    $menu.remove();
+    document.removeEventListener("mousedown", onDocMouseDown, true);
+  };
+  document.addEventListener("mousedown", onDocMouseDown, true);
+
+  // ===== Click en un item: crear nodo =====
+  $menu.on("click", ".v-context-list li", async (ev) => {
+    ev.stopPropagation();
+    const type = ev.currentTarget.dataset.type;
+    $menu.remove();
+    document.removeEventListener("mousedown", onDocMouseDown, true);
+    await this._createNodeFromContext(type, graphX, graphY, { fromId });
+  });
+
+  // ===== Buscador =====
+  const $search = $menu.find(".v-node-search");
+  $search.on("input", (ev) => {
+    const q = ev.currentTarget.value.toLowerCase();
+    $menu.find(".v-context-list li").each((_, li) => {
+      const $li = $(li);
+      const label = $li.text().toLowerCase();
+      $li.toggle(label.includes(q));
+    });
+  });
+
+  $search.trigger("focus");
+  $menu.on("wheel", (ev) => {
+    ev.stopPropagation();
+  });
+  }
+
+
+
   async _createNodeFromContext(type, graphX, graphY, { fromId } = {}) {
-    const node = this.graph.addNode(type, graphX, graphY);
+    const grid = this._gridSize || 40;
+    const sx = Math.round(graphX / grid) * grid;
+    const sy = Math.round(graphY / grid) * grid;
+
+    const node = this.graph.addNode(type, sx, sy);
 
     if (fromId) {
       this.graph.connect(fromId, node.id);
@@ -726,21 +999,26 @@ class VisualencerApp extends HandlebarsApplicationMixin(ApplicationV2) {
     );
   }
 
-  async _onPortInClick(nodeId) {
-    const from = this._pendingLinkFrom;
-    this._pendingLinkFrom = null;
-
-    if (!from || from === nodeId) return;
-
-    this.graph.connect(from, nodeId);
-    await this.graph.save();
-    this.render();
+  async _onPortInClick(_nodeId) {
+    // conexión por click deshabilitada: solo drag & drop
+    return;
   }
 
   async _onCompile() {
-    const { code } = VisualencerCompiler.compile(this.graph, {
-      name: "Visualencer Macro"
-    });
+    let result;
+    try {
+        result = VisualencerCompiler.compile(this.graph, {
+            name: "Visualencer Macro"
+        });
+    } catch (err) {
+        console.error("Visualencer | compile error", err);
+        ui.notifications.error(
+            `Visualencer: no se ha podido generar el código: ${err.message}`
+        );
+        return;
+    }
+
+    const { code } = result;
 
     const content = `
       <div class="visualencer-export">
