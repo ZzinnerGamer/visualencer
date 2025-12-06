@@ -226,7 +226,7 @@ class VisualencerCompiler {
 
             if (!scrollText && !hasChildText) {
                 throw new Error(
-                    game.iu18n.localize("VISUALENCER.NodeText.NoText")
+                    game.i18n.localize('VISUALENCER.NodeText.NoText')
                 );
             }
         }
