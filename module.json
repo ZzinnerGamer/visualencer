@@ -35,6 +35,7 @@
     ]
   },
   "description": "",
+  "url": "#{URL}#"
   "manifest": "#{MANIFEST}#",
   "download": "#{DOWNLOAD}#"
 }
