@@ -15,14 +15,20 @@
 
 .visualencer-canvas {
   position: relative;
+  flex: 1 1 auto;
   overflow: hidden;
+
+  background-color: #1b1b1f;
+  background-image:
+    linear-gradient(#222 1px, transparent 1px),
+    linear-gradient(90deg, #222 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0;
 }
 
 .visualencer-canvas .v-canvas-inner {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
   transform-origin: 0 0;
 }
 
@@ -30,6 +36,7 @@
 .v-node {
   position: absolute;
   min-width: 270px;
+  max-width: 500px;
   background: #262630;
   border: 1px solid #555;
   border-radius: 4px;
@@ -41,7 +48,7 @@
 
 body .v-node-picker {
   position: absolute;
-  background: rgba(20,20,20,0.92) !important;
+  background: rgba(20,20,20,0.92);
   border: 1px solid #444;
   border-radius: 6px;
   padding: 6px;
