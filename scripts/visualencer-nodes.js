@@ -128,16 +128,9 @@ VisualencerNodeTypes.register("animation", {
 
 
   compileRoot(node, block, _ctx) {
-    const c = node.config || {};
-    const { num } = VHelpers;
     const lines = block.lines;
 
     lines.push("seq.animation()");
-
-    if (c.preset && c.preset.trim()) {
-      const preset = c.preset.replace(/"/g, '\\"');
-      lines.push(`  .preset("${preset}")`);
-    }
 
   }
 });
@@ -2433,7 +2426,7 @@ VisualencerNodeTypes.register("timeRange", {
   }
 });
 
-VisualencerNodeTypes.register("presetSound", {
+VisualencerNodeTypes.register("preset", {
   label: "Preset",
   category: "common",
   role: "child",
@@ -2702,22 +2695,6 @@ VisualencerNodeTypes.register("zeroSpriteRotation", {
     const enabled = node.config?.enabled;
     if (enabled === false) return;
     if (enabled === true || enabled === undefined) block.lines.push("  .zeroSpriteRotation(true)");
-  }
-});
-
-VisualencerNodeTypes.register("persist", {
-  label: "Persist",
-  category: "effect",
-  role: "child",
-  families: ["effect"],
-  createConfig() {
-    return { enabled: true, persistTokenPrototype: false };
-  },
-  compileChild(node, block, _ctx) {
-    const c = node.config || {};
-    if (!c.enabled) return;
-    if (c.persistTokenPrototype) block.lines.push("  .persist(true, { persistTokenPrototype: true })");
-    else block.lines.push("  .persist()");
   }
 });
 
