@@ -2,13 +2,13 @@
 
 {{#*inline "v-fade-direction"}}
 <div class="v-field">
-    <label>{{label}} dur
+    <label>{{label}} <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Duration</strong></p>
         <input type="number" data-config="{{durKey}}" data-type="number" value="{{lookup config durKey}}">
     </label>
 
 </div>
 <div class="v-field">
-    <label>Ease<select data-config="ease">
+    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Ease</strong></p><select data-config="ease">
             <option value="linear" {{#if (eq node.config.ease "linear" )}}selected{{/if}}>linear</option>
             <option value="easeInSine" {{#if (eq node.config.ease "easeInSine" )}}selected{{/if}}>easeInSine</option>
             <option value="easeOutSine" {{#if (eq node.config.ease "easeOutSine" )}}selected{{/if}}>easeOutSine</option>
@@ -61,7 +61,7 @@
     </label>
 </div>
 <div class="v-field">
-    <label>{{label}} delay
+    <label>{{label}} <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Delay</strong></p>
         <input type="number" data-config="{{delayKey}}" data-type="number" value="{{lookup config delayKey}}">
     </label>
 </div>
@@ -72,7 +72,7 @@
 <div class="visualencer">
     <header class="v-toolbar">
         <label>
-            Type:
+            <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Type</strong></p>
             <select class="v-add-type">
                 {{#each nodeTypes as |nt|}}
                 <option value="{{nt.type}}">{{nt.label}}</option>
@@ -111,6 +111,9 @@
                 <div class="v-node-body">
                     {{!-- START --}}
                     {{#if (eq node.type "start")}}
+                    <fieldset class="v-group">
+                        <legend>Start</legend>
+                    </fieldset>
                     <p>Sequencer start node.</p>
                     {{/if}}
 
@@ -118,6 +121,7 @@
                     {{#if (eq node.type "effect")}}
                     <fieldset class="v-group">
                         <legend>Effect</legend>
+                        <h3 style="color:white;"><span>What is this?</span></h3>
                         <p>This part of the Sequencer allows you to easily play visual effects on the canvas, such as
                             animated .gifs, .webms, and other static images as moving effects and projectiles.</p>
                         <h3 style="color:white;"><span>How do I use this?</span></h3>
@@ -130,12 +134,15 @@
 <span style="color:#89ddff;">play</span>
                         </code></pre>
                         <div class="v-field">
-                            <label>Base folder
-                                <input type="text" data-config="baseFolder" value="{{node.config.baseFolder}}">
-                            </label>
-                        </div>
-                        <div class="v-field">
-                            <label>File
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>File</strong></p>
+                                <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js"><span style="color:#89ddff;">File</span> (<span style="color:#ffcb6b;">inFilePath = string|array&lt;string&gt;</span>)</code></pre>
+                                <ul><li>Filepath <code>Audio/Soundly_Assets/Combat/Blade/Miss1.wav</code></li><li>Wildcard filepath: <code>Audio/NeverWinter_Assets/Effects/Magic/Ice/*.wav</code></li><li>Database Path: <code>EffectAudioDB.Blade.hit</code></li></ul>
+                                <p>Visualencer Note: For traditional users, there is no need to type the quotation marks, the module automatically places them.</p>
+                                <p>Declares which sound to be played, but you can also do that when first initializing the sound with <code>.sound("file/path/here.wav")</code></p>
+                                <p>This may also be an array of paths, which will be randomly picked from each time the sound is played.</p>
+                                <p>If the path is a filepath, it may also contain a wildcard, which will cause the Sound to pick randomly between matching filepaths.</p>
+                                <p>In addition, if the sound has been registered on the <a href="https://github.com/fantasycalendar/FoundryVTT-Sequencer/wiki/Sequencer-Database" target="_blank" rel="noopener">Sequencer database</a>, you can reference database files with a dot-notation like so: <code>your_module_name.sounds.generic.explosions</code></p>
+                                <p>We recommend users and creators alike read the documentation on the <a href="https://github.com/fantasycalendar/FoundryVTT-Sequencer/wiki/Sequencer-Database" target="_blank" rel="noopener">Sequencer database</a>.</p>
                                 <input type="text" data-config="file" value="{{node.config.file}}">
                             </label>
                         </div>
@@ -159,8 +166,9 @@
                             <li>Direct coordinate on the canvas</li>
                             <li>String reference (see <code>Name node</code></a>)</li>
                         </ul>
+                        <p>Note that <code>Sounds</code> are only supported in v12</p>
                         <div class="v-field">
-                            <label>Mode
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Mode</strong></p>
                                 <select data-config="mode">
                                     <option value="selected-token" {{#if (eq node.config.mode "selected-token"
                                         )}}selected{{/if}}>
@@ -188,31 +196,31 @@
                         </div>
 
                         <div class="v-field">
-                            <label>Token ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Token ID</strong></p>
                                 <input type="text" data-config="tokenId" value="{{node.config.tokenId}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Token name
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Token name</strong></p>
                                 <input type="text" data-config="tokenName" value="{{node.config.tokenName}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Tile ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Tile ID</strong></p>
                                 <input type="text" data-config="tileId" value="{{node.config.tileId}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>X
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Coordinates (X)</strong></p>
                                 <input type="number" data-config="x" data-type="number" value="{{node.config.x}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Y
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Coordinates (Y)</strong></p>
                                 <input type="number" data-config="y" data-type="number" value="{{node.config.y}}">
                             </label>
                         </div>
@@ -228,7 +236,7 @@
 
                         <div class="v-field">
                             <label>
-                                <h4>Random offset</h4>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Random Offset</strong></p>
                                 <input type="number" data-config="randomOffset" data-type="number"
                                     value="{{node.config.randomOffset}}">
                                 <p><code>number|boolean</code> - causes the location to be offset by a random amount -
@@ -239,10 +247,9 @@
 
                         <div class="v-field">
                             <label>
-                                <h4>Cache Location
-                                    <input type="checkbox" data-config="cacheLocation" data-type="boolean" {{#if
-                                        node.config.cacheLocation}}checked{{/if}}>
-                                </h4>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Cache Location</strong>
+                                <input type="checkbox" data-config="cacheLocation" data-type="boolean" {{#if
+                                    node.config.cacheLocation}}checked{{/if}}></p>
                                 <p><code>boolean</code> - causes the given object’s location to be cached immediately
                                     rather than retrieved during the Sequence’s runtime</p>
                             </label>
@@ -250,10 +257,9 @@
 
                         <div class="v-field">
                             <label>
-                                <h4>Local
-                                    <input type="checkbox" data-config="local" data-type="boolean" {{#if
-                                        node.config.local}}checked{{/if}}>
-                                </h4>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Locally</strong>
+                                <input type="checkbox" data-config="local" data-type="boolean" {{#if
+                                    node.config.local}}checked{{/if}}></p>
                                 <p><code>boolean</code> - Used with <code>offset</code> to cause the location to be
                                     offset locally to the effect’s rotation</p>
                             </label>
@@ -261,10 +267,10 @@
 
                         <div class="v-field">
                             <label>
-                                <h4>Grid Units
-                                    <input type="checkbox" data-config="gridUnits" data-type="boolean" {{#if
-                                        node.config.gridUnits}}checked{{/if}}>
-                                </h4>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Grid Units</strong>
+                                <input type="checkbox" data-config="gridUnits" data-type="boolean" {{#if
+                                    node.config.gridUnits}}checked{{/if}}>
+                                    </p>
                                 <p><code>boolean</code> - Used with <code>Offset Node</code> (obligatory) to make each
                                     whole number represent in <code>x</code> and <code>y</code> to represent the
                                     effect’s scene’s grid size.</p>
@@ -314,21 +320,21 @@
                         <p>It is highly recommended that you do not load too many files at the same time, as Foundry
                             might not be able to load all of them.</p>
                         <div class="v-field">
-                            <label>inRepetitions
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Number of repetitions</strong></p>
                                 <input type="number" min="1" data-config="repeats" data-type="number"
                                     value="{{node.config.repeats}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label><code>inRepeatDelayMin</code> (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Minimum repeatition delay</strong></p>
                                 <input type="number" data-config="repeatDelayMin" data-type="number"
                                     value="{{node.config.repeatDelayMin}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label><code>inRepeatDelayMax</code>
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>MAximum delay repetition</strong></p>
                                 <input type="number" data-config="repeatDelayMax" data-type="number"
                                     value="{{node.config.repeatDelayMax}}">
                             </label>
@@ -345,14 +351,14 @@
                             second number, a random delay between the two numbers will be generated.</p>
 
                         <div class="v-field">
-                            <label>Minimum delay (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Minimum Delay (ms)</strong></p>
                                 <input type="number" data-config="delayMin" data-type="number"
                                     value="{{node.config.delayMin}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Maximum delay (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Maximum delay (ms)</strong></p>
                                 <input type="number" data-config="delayMax" data-type="number"
                                     value="{{node.config.delayMax}}">
                             </label>
@@ -369,7 +375,7 @@
                             will fade to/from.</p>
 
                         <div class="v-field">
-                            <label>Opacity (0–1)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Opacity (0-1)</strong></p>
                                 <input type="number" step="0.05" min="0" max="1" data-config="opacity"
                                     data-type="number" value="{{node.config.opacity}}">
                             </label>
@@ -385,7 +391,7 @@
                             duration, it will loop.</p>
 
                         <div class="v-field">
-                            <label>Duration (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Duration (ms)</strong></p>
                                 <input type="number" data-config="duration" data-type="number"
                                     value="{{node.config.duration}}">
                             </label>
@@ -401,30 +407,30 @@
                         <p>Sets the target object to be animated. Accepts a token or a tile.</p>
 
                         <div class="v-field">
-                            <label>Mode
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Mode</strong></p>
                                 <select data-config="mode">
                                     <option value="inToken" {{#if (eq node.config.mode "inToken" )}}selected{{/if}}>
-                                        inToken</option>
-                                    <option value="inTile" {{#if (eq node.config.mode "inTile" )}}selected{{/if}}>inTile
+                                        On Token</option>
+                                    <option value="inTile" {{#if (eq node.config.mode "inTile" )}}selected{{/if}}>On Tile
                                     </option>
                                     <option value="token-id" {{#if (eq node.config.mode "token-id" )}}selected{{/if}}>
-                                        Token ID</option>
-                                    <option value="tile-id" {{#if (eq node.config.mode "tile-id" )}}selected{{/if}}>Tile
+                                        On Token ID</option>
+                                    <option value="tile-id" {{#if (eq node.config.mode "tile-id" )}}selected{{/if}}>On Tile
                                         ID</option>
-                                    <option value="point" {{#if (eq node.config.mode "point" )}}selected{{/if}}> Point
+                                    <option value="point" {{#if (eq node.config.mode "point" )}}selected{{/if}}>On Point
                                         (x,y)</option>
                                 </select>
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Token ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Token ID</strong></p>
                                 <input type="text" data-config="tokenId" value="{{node.config.tokenId}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Tile ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Tile ID</strong></p>
                                 <input type="text" data-config="tileId" value="{{node.config.tileId}}">
                             </label>
                         </div>
@@ -447,7 +453,7 @@
                         <p>Default parameters: <code>{ ease: "linear", delay: 0, relativeToCenter: false }</code></p>
 
                         <div class="v-field">
-                            <label>Mode
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Mode</strong></p>
                                 <select data-config="mode">
                                     <option value="inToken" {{#if (eq node.config.mode "inToken" )}}selected{{/if}}>
                                         inToken</option>
@@ -464,31 +470,31 @@
                         </div>
 
                         <div class="v-field">
-                            <label>Token ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Token ID</strong></p>
                                 <input type="text" data-config="tokenId" value="{{node.config.tokenId}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Tile ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Tile ID</strong></p>
                                 <input type="text" data-config="tileId" value="{{node.config.tileId}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>X
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Point Coordinate X</strong></p>
                                 <input type="number" data-config="x" data-type="number" value="{{node.config.x}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Y
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Point Coordinate Y</strong></p>
                                 <input type="number" data-config="y" data-type="number" value="{{node.config.y}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Ease
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Ease</strong></p>
                                 <p>Check out what easings are available here: <a href="https://easings.net/"
                                         target="_blank" rel="noopener">https://easings.net/</a></p><select
                                     data-config="ease">
@@ -559,16 +565,16 @@
                         </div>
 
                         <div class="v-field">
-                            <label>Delay (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Delay (ms)</strong></p>
                                 <input type="number" data-config="delay" data-type="number"
                                     value="{{node.config.delay}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Relative To Center
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Relative to Center</strong>
                                 <input type="checkbox" data-config="relativeToCenter" data-type="boolean" {{#if
-                                    node.config.relativeToCenter}}checked{{/if}}>
+                                    node.config.relativeToCenter}}checked{{/if}}></p>
                             </label>
                         </div>
                     </fieldset>
@@ -582,7 +588,7 @@
                         <p>Sets the speed of the animation if <code>Move Towards node</code> has been called</p>
 
                         <div class="v-field">
-                            <label>moveSpeed
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Move Speed</strong></p>
                                 <input type="number" data-config="moveSpeed" data-type="number"
                                     value="{{node.config.moveSpeed}}">
                             </label>
@@ -603,7 +609,7 @@
                         </p>
 
                         <div class="v-field">
-                            <label>Mode
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Mode</strong></p>
                                 <select data-config="mode">
                                     <option value="inToken" {{#if (eq node.config.mode "inToken" )}}selected{{/if}}>
                                         inToken</option>
@@ -620,25 +626,25 @@
                         </div>
 
                         <div class="v-field">
-                            <label>Token ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Token ID</strong></p>
                                 <input type="text" data-config="tokenId" value="{{node.config.tokenId}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Tile ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Tile ID</strong></p>
                                 <input type="text" data-config="tileId" value="{{node.config.tileId}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>X
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Coordinate X</strong></p>
                                 <input type="number" data-config="x" data-type="number" value="{{node.config.x}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Y
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Coordinate Y</strong></p>
                                 <input type="number" data-config="y" data-type="number" value="{{node.config.y}}">
                             </label>
                         </div>
@@ -649,14 +655,14 @@
                             delay before it starts, and any given rotation offset.</p>
 
                         <div class="v-field">
-                            <label>Duration (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Duration (ms)</strong></p>
                                 <input type="number" data-config="duration" data-type="number"
                                     value="{{node.config.duration}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Ease
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Ease</strong></p>
                                 <p><strong>Note:</strong> The <code>ease</code> parameters are <em>not</em> supported
                                     for tokens due to Foundry removing support for it.</p>
                                 <p>Check out what easings are available here: <a href="https://easings.net/"
@@ -729,34 +735,30 @@
                         </div>
 
                         <div class="v-field">
-                            <label>Delay (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Delay (ms)</strong></p>
                                 <input type="number" data-config="delay" data-type="number"
                                     value="{{node.config.delay}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Rotation Offset (º)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Rotation offset (º)</strong></p>
                                 <input type="number" data-config="rotationOffset" data-type="number"
                                     value="{{node.config.rotationOffset}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>
-                                Towards Center
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Towards Center</strong>
                                 <input type="checkbox" data-config="towardsCenter" data-type="boolean" {{#if
-                                    node.config.towardsCenter}}checked{{/if}}>
+                                    node.config.towardsCenter}}checked{{/if}}></p>
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>
-
-                                <h4>Cache Location
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Cache Location</strong>
                                     <input type="checkbox" data-config="cacheLocation" data-type="boolean" {{#if
-                                        node.config.cacheLocation}}checked{{/if}}>
-                                </h4>
+                                        node.config.cacheLocation}}checked{{/if}}></p>
                             </label>
                         </div>
                     </fieldset>
@@ -775,7 +777,7 @@
                         <p>Default parameters: <code>{ delay: 0, relativeToCenter: false }</code></p>
 
                         <div class="v-field">
-                            <label>Mode
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Mode</strong></p>
                                 <select data-config="mode">
                                     <option value="inToken" {{#if (eq node.config.mode "inToken" )}}selected{{/if}}>
                                         inToken</option>
@@ -792,41 +794,40 @@
                         </div>
 
                         <div class="v-field">
-                            <label>Token ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Token ID</strong></p>
                                 <input type="text" data-config="tokenId" value="{{node.config.tokenId}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Tile ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Tile ID</strong></p>
                                 <input type="text" data-config="tileId" value="{{node.config.tileId}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>X
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Coordinate X</strong></p>
                                 <input type="number" data-config="x" data-type="number" value="{{node.config.x}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Y
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Coordinate Y</strong></p>
                                 <input type="number" data-config="y" data-type="number" value="{{node.config.y}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Delay (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Delay (ms)</strong></p>
                                 <input type="number" data-config="delay" data-type="number"
                                     value="{{node.config.delay}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>
-                                Relative to Center
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Relative to center</strong>
                                 <input type="checkbox" data-config="relativeToCenter" data-type="boolean" {{#if
-                                    node.config.relativeToCenter}}checked{{/if}}>
+                                    node.config.relativeToCenter}}checked{{/if}}></p>
                             </label>
                         </div>
                     </fieldset>
@@ -840,13 +841,13 @@
                         <p>Causes the movement or teleportation to be offset in the X and/or Y axis</p>
 
                         <div class="v-field">
-                            <label>Offset X
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Offset X</strong></p>
                                 <input type="number" data-config="x" data-type="number" value="{{node.config.x}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Offset Y
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Offset Y</strong></p>
                                 <input type="number" data-config="y" data-type="number" value="{{node.config.y}}">
                             </label>
                         </div>
@@ -880,7 +881,7 @@
                         <p>Sets the rotation of the animation, which is added on top of the calculated rotation after
                             <code>Rotate Towards node</code></p>
                         <div class="v-field">
-                            <label>Rotate (º)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Rotate (º)</strong></p>
                                 <input type="number" data-config="rotate" data-type="number"
                                     value="{{node.config.rotate}}">
                             </label>
@@ -903,14 +904,14 @@
                         <p>Default parameters: <code>{ ease: "linear", delay: 0 }</code></p>
 
                         <div class="v-field">
-                            <label>Degrees º
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Degrees (º)</strong></p>
                                 <input type="number" data-config="degrees" data-type="number"
                                     value="{{node.config.degrees}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Duration (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Duration (ms)</strong></p>
                                 <input type="number" data-config="duration" data-type="number"
                                     value="{{node.config.duration}}">
                             </label>
@@ -918,7 +919,7 @@
 
 
                         <div class="v-field">
-                            <label>Ease
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Ease</strong></p>
 
                                 <p><strong>Note:</strong> The <code>ease</code> parameters are <em>not</em> supported
                                     for tokens due to Foundry removing support for it.</p>
@@ -992,7 +993,7 @@
                         </div>
 
                         <div class="v-field">
-                            <label>Delay (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Delay (ms)</strong></p>
                                 <input type="number" data-config="delay" data-type="number"
                                     value="{{node.config.delay}}">
                             </label>
@@ -1015,21 +1016,21 @@
                         <p>Default parameters: <code>{ ease: "linear", delay: 0 }</code></p>
 
                         <div class="v-field">
-                            <label>Degrees º
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Degrees (º)</strong></p>
                                 <input type="number" data-config="degrees" data-type="number"
                                     value="{{node.config.degrees}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Duration (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Duration (ms)</strong></p>
                                 <input type="number" data-config="duration" data-type="number"
                                     value="{{node.config.duration}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Ease
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Ease</strong></p>
 
                                 <p><strong>Note:</strong> The <code>ease</code> parameters are <em>not</em> supported
                                     for tokens due to Foundry removing support for it.</p>
@@ -1103,7 +1104,7 @@
                         </div>
 
                         <div class="v-field">
-                            <label>Delay (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Delay (ms)</strong></p>
                                 <input type="number" data-config="delay" data-type="number"
                                     value="{{node.config.delay}}">
                             </label>
@@ -1125,7 +1126,7 @@
                             the tint to nothing.</p>
 
                         <div class="v-field">
-                            <label>Mode
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Mode</strong></p>
                                 <select data-config="mode">
                                     <option value="none" {{#if (eq node.config.mode "none" )}}selected{{/if}}>(ninguno)
                                     </option>
@@ -1139,13 +1140,13 @@
                         </div>
 
                         <div class="v-field">
-                            <label>Tint hex
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Tint hex</strong></p>
                                 <input type="text" data-config="hex" value="{{node.config.hex}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Tint decimal
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Tint decimal</strong></p>
                                 <input type="number" data-config="dec" data-type="number" value="{{node.config.dec}}">
                             </label>
                         </div>
@@ -1176,25 +1177,27 @@
                     {{#if (eq node.type "sound")}}
                     <fieldset class="v-group">
                         <legend>Sound</legend>
+                        <h3 style="color:white;"><span>What is this?</span></h3>
+                        <p>This part of the Sequencer makes playing sounds easy, including fading the sound in or out, playing for specific players, etc.</p>
+                        <h3 style="color:white;"><span>How do I use this?</span></h3>
+                        <p>When creating a sound section, you can configure the sound like this:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code><span style="color:#89ddff;">Start / Sequence</span><span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Sound</span> (example <span style="color:#ffcb6b">File "sounds/mysound.ogg"</span>) <span style="color:#f07178;"> → </span>
+<span style="color: #89ddff;">Fade (audio)</span> (example <span style="color:#ffcb6b">fadeIn: 500ms</span> | <span style="color:#ffcb6b">fadeOut: 500ms</span>) <span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Play</span></code></pre>
                         <div class="v-field">
-                            <label>File
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>File</strong></p>
                                 <input type="text" data-config="file" value="{{node.config.file}}">
-                            </label>
-                        </div>
-                        <div class="v-field">
-                            <label>
-                                <input type="checkbox" data-config="locally" data-type="boolean" {{#if
-                                    node.config.locally}}checked{{/if}}>
-                                Sólo local
                             </label>
                         </div>
                     </fieldset>
                     {{/if}}
 
-                    {{!-- ANIMATION (root, simplificada) --}}
+                    {{!-- ANIMATION (root) --}}
                     {{#if (eq node.type "animation")}}
                     <fieldset class="v-group">
                         <legend>Animation</legend>
+                        <h3 style="color:white;"><span>What is this?</span></h3>
                         <p>This part of the Sequencer acts <strong>on</strong> objects in the scene, such as tokens,
                             tiles, etc, and it can do things like moving tokens, teleporting them, hiding them, fading
                             them out, etc.</p>
@@ -1207,53 +1210,50 @@
 <span style="color:#89ddff;">Fade</span> (example <span style="color:#ffcb6b">fadeIn: 500ms</span>) <span style="color:#f07178;"> → </span>
 <span style="color:#89ddff;">Teleport To</span> (example <span style="color:#ffcb6b">x: 100, y: 0</span>) <span style="color:#f07178;"> → </span>
 <span style="color:#89ddff;">Play</span></code></pre>
-
-                        <div class="v-field">
-                            <label>Preset
-                                <p><code>.preset("name")</code></p>
-                                <p>Applies a preset to the current animation - read the <a href="#/presets">Sequencer
-                                        Presets article</a> for more information.</p>
-                                <input type="text" data-config="preset" value="{{node.config.preset}}">
-                            </label>
-                        </div>
                     </fieldset>
                     {{/if}}
 
                     {{!-- SCROLLING TEXT (root) --}}
                     {{#if (eq node.type "scrollingText")}}
-                    <div class="v-field">
-                        <label>Scrolling Text
-                            <p>This part of the Sequencer allows you to easily display scrolling text on the canvas, to
-                                simulate damage numbers or other text. It is a simpler version of effects, but still
-                                rocks a powerful API.</p>
-                            <h3 style="color:white;"><span>How do I use this?</span></h3>
-                            <p>When creating a scrolling text section, you can configure the text and duration like
-                                this:</p>
-                            <pre v-pre="" data-lang="js" class="language-js"><code>Start / Sequence</span><span style="color:#f07178;"> → </span>
+                    <fieldset class="v-group">
+                        <legend>Scrolling Text</legend>
+                        <h3 style="color:white;"><span>What is this?</span></h3>
+                        <p>This part of the Sequencer allows you to easily display scrolling text on the canvas, to
+                            simulate damage numbers or other text. It is a simpler version of effects, but still
+                            rocks a powerful API.</p>
+                        <h3 style="color:white;"><span>How do I use this?</span></h3>
+                        <p>When creating a scrolling text section, you can configure the text and duration like
+                            this:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code>Start / Sequence</span><span style="color:#f07178;"> → </span>
 <span style="color:#89ddff;"></span>Scrolling Text</span><span class="token punctuation">(example <span style="color:#ffcb6b">"My Text"</span>)<span style="color:#f07178;"> → </span>
 <span style="color:#89ddff;">At Location</span>(example <span style="color:#ffcb6b">Token</span>) <span style="color:#f07178;"> → </span>
 <span style="color:#89ddff;">Play</span></code></pre>
-                            <p>or more involved</p>
-                            <pre v-pre="" data-lang="js" class="language-js"><code><span style="color:#89ddff;">Start / Sequence</span><span style="color:#f07178;"> → </span>
+                        <p>or more involved</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code><span style="color:#89ddff;">Start / Sequence</span><span style="color:#f07178;"> → </span>
 <span style="color:#89ddff;">Scrolling Text</span> <span style="color:#f07178;"> → </span>
 <span style="color:#89ddff;">At Location</span>(example <span style="color:#ffcb6b">Token</span>, <span style="color:#ffcb6b">Random Offset: True</span>) <span style="color:#f07178;"> → </span>
 <span style="color:#89ddff;">Text</span>(example <span style="color:#ffcb6b">"My Text"</span> | <span style="color:#ffcb6b">Fill: #ffffff</span> | <span style="color:#ffcb6b">Font Size: 35</span> | <span style="color:#ffcb6b">Font Weigth: bold</span> | <span style="color:#ffcb6b">Lone Join: round</span> | <span style="color:#ffcb6b">Stroke Thickness: 3</span>) <span style="color:#f07178;"> → </span>
 <span style="color:#89ddff;">Play</span></code></pre>
+                        <div class="v-field">
+                        <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Text</strong></p>
                             <input type="text" data-config="text" value="{{node.config.text}}">
                         </label>
                     </div>
                     <div class="v-field">
-                        <label>Duration (ms)
+                        <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Duration (ms)</strong></p>
                             <input type="number" data-config="durationMs" data-type="number"
                                 value="{{node.config.durationMs}}">
                         </label>
                     </div>
+                    </fieldset>
                     {{/if}}
 
                     {{!-- CANVAS PAN (root) --}}
                     {{#if (eq node.type "canvasPan")}}
+                    <fieldset class="v-field">
+                        <legend>Canvas Pan</legend>
+                    <h3 style="color:white;"><span>What is this?</span></h3>
                     <p>This part of the Sequencer allows you to easily pan your canvas, or the canvas of other players.</p>
-
                     <p>When creating a canvas pan section, you can assemble these methods like this:</p>
                     <pre v-pre="" data-lang="js" class="language-js"><code>Start / Sequence</span><span style="color:#f07178;"> → </span>
 <span style="color:#89ddff;"></span>Canvas Pan</span><span style="color:#f07178;"> → </span>
@@ -1265,38 +1265,61 @@
 <span style="color:#89ddff;">At Location</span>(example <span style="color:#ffcb6b">Token</span>) <span style="color:#f07178;"> → </span> // Set the location
 <span style="color:#89ddff;">Duration</span>(example <span style="color:#ffcb6b">1000</span>) <span style="color:#f07178;"> → </span> // Pan over 1 second
 <span style="color:#89ddff;">Scale</span>(example <span style="color:#ffcb6b">2</span>) <span style="color:#f07178;"> → </span> // Zoom in
-<span style="color:#89ddff;">Lock View</span>(example <span style="color:#ffcb6b">500</span>)<span style="color:#f07178;"> → </span> // Lock the view for 5 seconds
+<span style="color:#89ddff;">Lock View</span>(example <span style="color:#ffcb6b">5000ms</span>)<span style="color:#f07178;"> → </span> // Lock the view for 5 seconds
 <span style="color:#89ddff;">Play</span></code></pre>
+                    </fieldset>
                     {{/if}}
 
                     {{!-- CROSSHAIR (root) --}}
                     {{#if (eq node.type "crosshair")}}
+                    <fieldset class="v-field">
+                        <legend>Crosshair</legend>
+                    <h3 style="color:white;"><span>What is this?</span></h3>
+                        <p>This part of the Sequencer enables the use of its crosshairs directly in sequences. It can be used to select a location for an 
+                        <code>Effect node</code> to be played at, or to move a token via an
+                        <code>Animation node</code> to a specific location.</p>
+                    <h3 style="color:white;"><span>How do i use this?</span></h3>
+                    <p>You can assemble a crosshair section like this:</p>
+                    <pre v-pre="" data-lang="js" class="language-js"><code>Start / Sequence</span><span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;"></span>Crosshair</span><span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">At Location</span>(example <span style="color:#ffcb6b">target</span>) <span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Fade (Visual)</span> (example <span style="color:#ffcb6b">Fade In: 500ms</span> | <span style="color:#ffcb6b">Fade Out: 500ms</span>) <span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Play</span></code></pre>
+                    <h3 style="color:white;"><span>Why "crosshair"?</span></h3>
+                    <p>The central idea is to give the crosshair a name, which ties its final location to a piece of text. When you use
+<code>Crosshair (target)</code> the section will create a crosshair and when it has been placed, tie the location that it ends up at with the text
+<code>target</code> - this means that any section after this one can use
+<code>target</code> in its location methods (such as effects) as a placeholder for its placement location.</p>
+<p>You can also use the <code>Name field</code> method to achieve the same thing.</p>
                     <div class="v-field">
-                        <label>Name
+                        <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Name</strong></p>
                             <input type="text" data-config="name" value="{{node.config.name}}">
                         </label>
-                        <label>File
+                        <p>Causes the crosshair’s final position to be stored in the sequence, and can then be used in any subsequent section as a placeholder for locations, such as in effect’s <code>At Location Node</code>.</p>
+                    </div>
+                    <div class="v-field">
+                        <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>File</strong></p>
                             <input type="text" data-config="file" value="{{node.config.file}}">
                         </label>
-                    </div>
+                    </fieldset>
                     {{/if}}
 
                     {{!-- WAIT (root) --}}
                     {{#if (eq node.type "wait")}}
-                    <div class="v-field">
-                        <label>Tiempo (ms)
+                    <fieldset class="v-field">
+                        <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Time (ms)</strong></p>
                             <input type="number" data-config="ms" data-type="number" value="{{node.config.ms}}">
                         </label>
-                    </div>
+                    </fieldset>
                     {{/if}}
 
                     {{!-- MACRO (root) --}}
                     {{#if (eq node.type "macro")}}
-                    <div class="v-field">
-                        <label>Nombre de Macro
+                    <fieldset class="v-field">
+                        <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Macro name</strong></p>
                             <input type="text" data-config="macroName" value="{{node.config.macroName}}">
                         </label>
-                    </div>
+                    </fieldset>
                     {{/if}}
 
                     {{!-- START TIME (child) --}}
@@ -1309,7 +1332,7 @@
                         <p><img src="https://fantasycomputer.works/FoundryVTT-Sequencer/images/start_time.jpg" alt="End time example image" class="medium-zoom-image"></p>
 
                         <div class="v-field">
-                            <label>startTime (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Start time (ms)</strong></p>
                                 <input type="number" data-config="startTime" data-type="number"
                                     value="{{node.config.startTime}}">
                             </label>
@@ -1327,7 +1350,7 @@
                         <p><img src="https://fantasycomputer.works/FoundryVTT-Sequencer/images/start_perc.jpg" alt="Start time percentage example image" class="medium-zoom-image"></p>
 
                         <div class="v-field">
-                            <label>startTimePerc (0–1)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Start time percentage (0-1)</strong></p>
                                 <input type="number" step="0.05" min="0" max="1" data-config="startTimePerc"
                                     data-type="number" value="{{node.config.startTimePerc}}">
                             </label>
@@ -1345,7 +1368,7 @@
                         <p><img src="https://fantasycomputer.works/FoundryVTT-Sequencer/images/end_time.jpg" alt="End time example image" class="medium-zoom-image"></p>
 
                         <div class="v-field">
-                            <label>endTime (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>End time (ms)</strong></p>
                                 <input type="number" data-config="endTime" data-type="number"
                                     value="{{node.config.endTime}}">
                             </label>
@@ -1364,7 +1387,7 @@
                         <p><img src="https://fantasycomputer.works/FoundryVTT-Sequencer/images/end_perc.jpg" alt="End time percentage example image" class="medium-zoom-image"></p>
 
                         <div class="v-field">
-                            <label>endTimePerc (0–1)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>End time percentage (0-1)</strong></p>
                                 <input type="number" step="0.05" min="0" max="1" data-config="endTimePerc"
                                     data-type="number" value="{{node.config.endTimePerc}}">
                             </label>
@@ -1382,14 +1405,14 @@
                         <p><img src="https://fantasycomputer.works/FoundryVTT-Sequencer/images/time_range.jpg" alt="Time range example image" class="medium-zoom-image"></p>
 
                         <div class="v-field">
-                            <label>Start (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Start (ms)</strong></p>
                                 <input type="number" data-config="start" data-type="number"
                                     value="{{node.config.start}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>End (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>End (ms)</strong></p>
                                 <input type="number" data-config="end" data-type="number" value="{{node.config.end}}">
                             </label>
                         </div>
@@ -1397,14 +1420,14 @@
                     {{/if}}
 
                     {{!-- PRESET (child) --}}
-                    {{#if (eq node.type "presetSound")}}
+                    {{#if (eq node.type "preset")}}
                     <fieldset class="v-group">
                         <legend>Preset</legend>
                         <p><code>.preset("name")</code></p>
-                        <p>Applies a preset to the current animation - read the <a href="#/presets">Sequencer Presets
+                        <p>Applies a preset to the current animation - read the <a href="https://fantasycomputer.works/FoundryVTT-Sequencer/#/presets">Sequencer Presets
                                 article</a> for more information.</p>
                         <div class="v-field">
-                            <label>Preset name
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Preset name</strong></p>
                                 <input type="text" data-config="preset" value="{{node.config.preset}}">
                             </label>
                         </div>
@@ -1415,8 +1438,10 @@
                     {{#if (eq node.type "baseFolder")}}
                     <fieldset class="v-group">
                         <legend>Base Folder</legend>
+                        <code>.baseFolder(inPath)</code>
+                        <p>Defines the base folder that will prepend to the file path. This is mainly just useful to make the file path easier to manage.</p>
                         <div class="v-field">
-                            <label>Base folder path
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Base folder path</strong></p>
                                 <input type="text" data-config="baseFolder" value="{{node.config.baseFolder}}">
                             </label>
                         </div>
@@ -1427,9 +1452,30 @@
                     {{#if (eq node.type "setMustache")}}
                     <fieldset class="v-group">
                         <legend>Set Mustache</legend>
-
+                        <p><code>.setMustache(object)</code></p>
+                        <p>Sets the <a href="https://handlebarsjs.com/guide/" target="_blank" rel="noopener">Mustache</a> of the filepath. This is applied <em>after</em> the randomization of the filepath, if available.</p>
+                        <p>An example would be to provide a path like this to the sound: <code>Explosion_{{type}}_{{number}}.wav</code></p>
+                        <p>By then calling this method and passing an object, Mustache will attempt to fill in <code>{{type}}</code> and <code>{{number}}</code> with that object. This means we can dynamically generate the string for the path. If you were to pass this into the method:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js">
+{
+    <span style="color:#f07178">"type"</span>: <span style="color:#ffcb6b">"Electrical"</span>,
+    <span style="color:#f07178">"number"</span>: <span style="color:#ffcb6b">"5"</span>
+}
+                        </code></pre>
+                        <p>The final result would become: <code>Explosion_Electrical_5.wav</code></p>
+                        <p>You can also pass functions that will get evaluated during runtime by Mustache:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js">
+{
+    <span style="color:#f07178">"color"</span>: <span style="#ffcb6b">() =&gt; {</span>
+        <span style="color:#ffcb6b;">return</span> <span style="color:#ffcb6b;">["Fire", "Electrical", "Underwater"][Math.floor(Math.random() * 3)];</span> // Pick a random type from this list
+    <span style="color:#ffcb6b;">}</span>,
+    <span style="color:#f07178">"number"</span>: <span style="color:#ffcb6b">() =&gt; {</span>
+        <span style="color:#ffcb6b;">return</span> <span style="color:#ffcb6b;">Math.ceil(Math.random() * 9) + 1;</span> // Pick a random number between 1 and 9
+    <span style="color:#ffcb6b;">}</span>
+}
+                        </code></pre>
                         <div class="v-field">
-                            <label>Mustache object (JS literal)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Mustache object (js literal)</strong></p>
                                 <textarea data-config="mustache" rows="4">{{node.config.mustache}}</textarea>
                             </label>
                         </div>
@@ -1440,9 +1486,18 @@
                     {{#if (eq node.type "addOverride")}}
                     <fieldset class="v-group">
                         <legend>Add Override</legend>
-                        <p>Función asíncrona ejecutada antes de reproducir el sonido/efecto.</p>
+                        <p>Adds a function that will run at the end of the sound serialization step, but before it is played. Allows direct modifications of sound’s data. For example, it could be manipulated to change which file will be used based  on the distance to the target.</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js">
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">Add Override</span>(Example <span style="color:#ffcb6b;">async (sound, data)</span> => {
+    <span style="color:#ffcb6b;">// Do things here</span>
+    <span style="color:#ffcb6b;">return soundData;</span>
+}) ///
+                        </code></pre>
+                        <p><code>sound</code> is a reference to the sound in itself - interact with this at your own risk.</p>
+                        <p><code>data</code> is the sound’s data that is going to be passed to canvas layer.</p>
+                        <p>You <em>must</em> define the function like above and return the data at the end of the function. See examples at the bottom of the <a href="https://github.com/fantasycalendar/FoundryVTT-Sequencer/blob/master/README.md#magic-missile" target="_blank" rel="noopener">readme</a> for more in depth usage.</p>
                         <div class="v-field">
-                            <label>Código del override
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Override code</strong></p>
                                 <textarea data-config="body" rows="6">{{node.config.body}}</textarea>
                             </label>
                         </div>
@@ -1454,7 +1509,7 @@
                     <fieldset class="v-group">
                         <legend>Volume</legend>
                         <div class="v-field">
-                            <label>Volume (0–1)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Volume 0-1</strong></p>
                                 <p>A normalized value between <code>0.0</code> and <code>1.0</code> which determines the
                                     volume of the sound. Defaults to <code>0.0</code>.</p>
                                 <p><strong>Note:</strong> This is affected by each client’s volume settings in Foundry,
@@ -1472,14 +1527,7 @@
                     <fieldset class="v-group">
                         <legend>Locally</legend>
                         <p><code>.locally()</code> or <code>.locally(bool)</code></p>
-                        <p>Causes the canvas pan to be played only locally, and not push to other connected clients.</p>
-                        <div class="v-field">
-                            <label>
-                                <input type="checkbox" data-config="locally" data-type="boolean" {{#if
-                                    node.config.locally}}checked{{/if}}>
-                                Play only locally
-                            </label>
-                        </div>
+                        <p>Causes the effect to be played only locally, and not push to other connected clients.</p>
                     </fieldset>
                     {{/if}}
 
@@ -1491,11 +1539,11 @@
                         <p>Causes the canvas pan not to play, and skip all delays, repetitions, waits, etc. If you pass a function, the function should return something false-y if you do not want the canvas pan or sound to play.</p>
                         <p>Below is an example of a function used in this method, which would cause this canvas pan to only be played about 50% of the time.</p>
                         <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js">
-<span style="color:#89ddff;">Play If</span>(Example <span style="color:#ffcb6b;">return Math.random() < 0.5;</span>) <span style="color:#f07178;">→</span> ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">Play If</span>(Example <span style="color:#ffcb6b;">return Math.random() < 0.5;</span>) ///
                         </code></pre>
 
                         <div class="v-field">
-                            <label>Mode
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Mode</strong></p>
                                 <select data-config="mode">
                                     <option value="always" {{#if (eq node.config.mode "always" )}}selected{{/if}}>Always
                                     </option>
@@ -1508,7 +1556,7 @@
                         </div>
 
                         <div class="v-field">
-                            <label>playIf bool
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Play if boolean</strong></p>
                                 <select data-config="bool">
                                     <option value="true" {{#if node.config.bool}}selected{{/if}}>true</option>
                                     <option value="false" {{#unless node.config.bool}}selected{{/unless}}>false</option>
@@ -1517,7 +1565,7 @@
                         </div>
 
                         <div class="v-field">
-                            <label>Chance (0–1)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Play if chance (0-1)</strong></p>
                                 <input type="number" step="0.05" min="0" max="1" data-config="chance" data-type="number"
                                     value="{{node.config.chance}}">
                             </label>
@@ -1615,24 +1663,23 @@
                         <legend>Loop Options</legend>
 
                         <div class="v-field">
-                            <label>Loop delay (ms)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Loop delay (ms)</strong></p>
                                 <input type="number" data-config="loopDelay" data-type="number"
                                     value="{{node.config.loopDelay}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Max loops
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Maximum loops</strong></p>
                                 <input type="number" data-config="maxLoops" data-type="number"
                                     value="{{node.config.maxLoops}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>On end last loop</strong>
                                 <input type="checkbox" data-config="endOnLastLoop" data-type="boolean" {{#if
-                                    node.config.endOnLastLoop}}checked{{/if}}>
-                                endOnLastLoop
+                                    node.config.endOnLastLoop}}checked{{/if}}></p>
                             </label>
                         </div>
                     </fieldset>
@@ -1647,7 +1694,7 @@
                         <p>Accepts a single user ID or username (case-sensitive), or an array thereof.</p>
 
                         <div class="v-field">
-                            <label>User IDs / names (comma separated)
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>User IDs / Names (comma separated)</strong></p>
                                 <input type="text" data-config="users" value="{{node.config.users}}">
                             </label>
                         </div>
@@ -1658,9 +1705,16 @@
                     {{#if (eq node.type "copySprite")}}
                     <fieldset class="v-group">
                         <legend>Copy Sprite</legend>
-
+                        <code>.copySprite(token|tile, object)</code>
+                        <p>Examples:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code><span style="color:#f07178;"> → </span><span style="color:#89ddff;">copySprite</span>(<span style="color:#ff9cac;">token</span>)///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">copySprite</span>(<span style="color:#ffcb6b;">tile</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">copySprite</span>(<span style="color:#ffcb6b;">token</span>, { <span style="color:#f78c6c;">Cache Location</span>: <span style="color:#ffcb6b;">true</span>}) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">copySprite</span>(<span style="color:#ffcb6b;">token</span>, { <span style="color:#f78c6c;">Random Offset</span>: <span style="color:#ffcb6b;">true</span> }) ///
+                        </code></pre>
+                        <p>Create an effect based on the given object, effectively copying the object as an effect. Useful when you want to do some effect magic on tokens or tiles. When used with a token or a tile, the effect will be placed at the exact same place as the object.</p>
                         <div class="v-field">
-                            <label>Modo
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Mode</strong></p>
                                 <select data-config="mode">
                                     <option value="selected-token" {{#if (eq node.config.mode "selected-token"
                                         )}}selected{{/if}}>Token selected</option>
@@ -1673,53 +1727,68 @@
                                 </select>
                             </label>
                         </div>
-
                         <div class="v-field">
-                            <label>Token ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Token ID</strong></p>
                                 <input type="text" data-config="tokenId" value="{{node.config.tokenId}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Tile ID
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Tile ID</strong></p>
                                 <input type="text" data-config="tileId" value="{{node.config.tileId}}">
                             </label>
                         </div>
 
+                        <hr>
+                        
+                        <p>Also supports a second options object that accepts:</p>
                         <div class="v-field">
-                            <label>Random offset
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Random Offset</strong></p>
                                 <input type="number" data-config="randomOffset" data-type="number"
                                     value="{{node.config.randomOffset}}">
+                            <p>Causes the location to be offset by a random amount - if given a number, this acts as a multiplier for the randomness, using the size of the object (or a single grid square/hex) as the multiplier.</p>
                             </label>
                         </div>
-
                         <div class="v-field">
-                            <label>Offset X
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Offset</strong></p>
+                            <p>(default <code>{ x: 0, y: 0 }</code>) - causes the location to be offset by a set amount</p>
+                            </label>
+                        <div class="v-field">
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Offset X</strong></p>
                                 <input type="number" data-config="offsetX" data-type="number"
                                     value="{{node.config.offsetX}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label>Offset Y
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Offset Y</strong></p>
                                 <input type="number" data-config="offsetY" data-type="number"
                                     value="{{node.config.offsetY}}">
                             </label>
                         </div>
 
                         <div class="v-field">
-                            <label><input type="checkbox" data-config="cacheLocation" data-type="boolean" {{#if
-                                    node.config.cacheLocation}}checked{{/if}}> cacheLocation</label>
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Cache Location</strong>
+                                <input type="checkbox" data-config="cacheLocation" data-type="boolean" {{#if
+                                    node.config.cacheLocation}}checked{{/if}}></p>
+                                <p>Causes the given object’s location to be cached immediately rather than retrieved during the Sequence’s runtime</p>
+                            </label>
                         </div>
 
                         <div class="v-field">
-                            <label><input type="checkbox" data-config="local" data-type="boolean" {{#if
-                                    node.config.local}}checked{{/if}}> local</label>
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Local</strong>
+                                <input type="checkbox" data-config="local" data-type="boolean" {{#if
+                                    node.config.local}}checked{{/if}}></p>
+                            <p>Used with <code>offset</code> to cause the location to be offset locally to the effect’s rotation</p>
+                            </label>
                         </div>
 
                         <div class="v-field">
-                            <label><input type="checkbox" data-config="gridUnits" data-type="boolean" {{#if
-                                    node.config.gridUnits}}checked{{/if}}> gridUnits</label>
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Grid units</strong>
+                                <input type="checkbox" data-config="gridUnits" data-type="boolean" {{#if
+                                    node.config.gridUnits}}checked{{/if}}></p>
+                                <p>Used with <code>offset</code> to make each whole number represent in <code>x</code> and <code>y</code> to represent the effect’s scene’s grid size</p>
+                            </label>
                         </div>
                     </fieldset>
                     {{/if}}
@@ -1728,9 +1797,21 @@
                     {{#if (eq node.type "attachTo")}}
                     <fieldset class="v-group">
                         <legend>Attach To</legend>
-
+                        <p><code>.attachTo(object|string, object)</code></p>
+                        <p>Examples:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code><span style="color:#f07178;"> → </span><span style="color:#89ddff;">attachTo</span>(<span style="color:#ff9cac;">token</span>)///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">attachTo</span>(<span style="color:#ffcb6b;">tile</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">attachTo</span>(<span style="color:#ffcb6b;">template</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">attachTo</span>(<span style="color:#ffcb6b;">"stored_name"</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">attachTo</span>(<span style="color:#ffcb6b;">token</span>, { <span style="color:#f78c6c;">Align</span>: <span style="color:#ffcb6b;">"top-right"</span>, <span style="color:#f78c6c;">Edge</span>: <span style="color:#ffcb6b;">"outer"</span> }) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">attachTo</span>(<span style="color:#ffcb6b;">token</span>, { <span style="color:#f78c6c;">Bind Visibility</span>: <span style="color:#ffcb6b;">false</span>, <span style="color:#f78c6c;">Random Offset</span>: <span style="color:#ffcb6b;">true</span> }) ///
+</code></pre>
+                        <p>This method makes the effect attached to an object. If the object cannot have attached effects, the effect will be created on the canvas.</p>
+                        <p>A smart method that can take:</p>
+                        <ul><li>Reference to a placeable object (tokens, templates, lights, etc)</li>
+                        <li>String reference (see <a href="https://fantasycomputer.works/FoundryVTT-Sequencer/#/api/effect?id=name"><code>Name node</code></a>)</li></ul>
                         <div class="v-field">
-                    <label>Modo
+                    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Mode</strong></p>
                         <select data-config="mode">
                             <option value="selected-token" {{#if (eq node.config.mode "selected-token"
                                 )}}selected{{/if}}>Token selected</option>
@@ -1747,25 +1828,29 @@
                         </div>
 
                         <div class="v-field">
-                    <label>Token ID
+                    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Token ID</strong></p>
                         <input type="text" data-config="tokenId" value="{{node.config.tokenId}}">
                     </label>
                         </div>
 
                         <div class="v-field">
-                    <label>Token name
+                    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Token name</strong></p>
                         <input type="text" data-config="tokenName" value="{{node.config.tokenName}}">
                     </label>
                         </div>
 
                         <div class="v-field">
-                    <label>Stored name
+                    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Stored name</strong></p>
                         <input type="text" data-config="storedName" value="{{node.config.storedName}}">
                     </label>
                         </div>
+                        
+                        <hr>
+
+                        <p>In addition, a secondary options parameter can be given to this method, which has the following options:</p>
 
                         <div class="v-field">
-                    <label>Align
+                    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Align</strong></p>
                         <select data-config="align">
                             <option value="top-left" {{#if (eq node.config.align "top-left"
                                 )}}selected{{/if}}>top-left</option>
@@ -1786,11 +1871,12 @@
                             <option value="bottom-right" {{#if (eq node.config.align "bottom-right"
                                 )}}selected{{/if}}>bottom-right</option>
                         </select>
+                        <p>(default <code>center</code>) - This causes the attached effect to snap to a given coordinate on the target</p>
                     </label>
                         </div>
 
                         <div class="v-field">
-                    <label>Edge
+                    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Edge</strong></p>
                         <select data-config="edge">
                             <option value="inner" {{#if (eq node.config.edge "inner" )}}selected{{/if}}>
                                 inner</option>
@@ -1798,50 +1884,85 @@
                             </option>
                             <option value="outer" {{#if (eq node.config.edge "outer" )}}selected{{/if}}>
                                 outer</option>
+                        <p>(default <code>on</code>) - Together with the <code>align</code> option, this causes the effect to snap to the inner, outer, or on the edge of the object. Valid options are:<ul><li>inner, on, outer</li></ul></p>
                         </select>
                     </label>
                         </div>
 
                         <div class="v-field">
-                    <label>Random offset
+                    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Random offset</strong></p>
                         <input type="number" data-config="randomOffset" data-type="number"
                             value="{{node.config.randomOffset}}">
+                        <p>Causes the location to be offset by a random amount - if given a number, this acts as a multiplier for the randomness, using the size of the object (or a single grid square/hex) as the multiplier.</p>
                     </label>
                         </div>
-
                         <div class="v-field">
-                    <label>Offset X
+                    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Offset</strong></p>
+                        <p>(default <code>{ x: 0, y: 0 }</code>) - causes the location to be offset by a set amount</p>
+                    </label>
+                        <div class="v-field">
+                    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Offset X</strong></p>
                         <input type="number" data-config="offsetX" data-type="number"
                             value="{{node.config.offsetX}}">
                     </label>
                         </div>
 
                         <div class="v-field">
-                    <label>Offset Y
+                    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Offset Y</strong></p>
                         <input type="number" data-config="offsetY" data-type="number"
                             value="{{node.config.offsetY}}">
                     </label>
                         </div>
+                        </div>
 
-                        <div class="v-field"><label><input type="checkbox" data-config="bindVisibility"
-                            data-type="boolean" {{#if node.config.bindVisibility}}checked{{/if}}>
-                        bindVisibility</label></div>
-                        <div class="v-field"><label><input type="checkbox" data-config="bindAlpha"
-                            data-type="boolean" {{#if node.config.bindAlpha}}checked{{/if}}>
-                        bindAlpha</label></div>
-                        <div class="v-field"><label><input type="checkbox" data-config="bindScale"
-                            data-type="boolean" {{#if node.config.bindScale}}checked{{/if}}>
-                        bindScale</label></div>
-                        <div class="v-field"><label><input type="checkbox" data-config="bindRotation"
-                            data-type="boolean" {{#if node.config.bindRotation}}checked{{/if}}>
-                        bindRotation</label></div>
-                        <div class="v-field"><label><input type="checkbox" data-config="local" data-type="boolean"
-                            {{#if node.config.local}}checked{{/if}}> local</label></div>
-                        <div class="v-field"><label><input type="checkbox" data-config="gridUnits"
-                            data-type="boolean" {{#if node.config.gridUnits}}checked{{/if}}>
-                        gridUnits</label></div>
-                        <div class="v-field"><label><input type="checkbox" data-config="template"
-                            data-type="boolean" {{#if node.config.template}}checked{{/if}}> template</label>
+                        <div class="v-field">
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Bind Visibility</strong>
+                            <input type="checkbox" data-config="bindVisibility"
+                            data-type="boolean" {{#if node.config.bindVisibility}}checked{{/if}}></p>
+                            <p(default <code>true</code>) - causes the effect to become hidden when the attached object is hidden</p>
+                            </label>
+                        </div>
+                        <div class="v-field">
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Bind Alpha</strong>
+                            <input type="checkbox" data-config="bindAlpha"
+                            data-type="boolean" {{#if node.config.bindAlpha}}checked{{/if}}></p>
+                            <p>(default <code>true</code>) - causes the effect to share the same alpha as the attached object (not the same as above, hidden is on/off, alpha is a sliding scale of visibility)</p>
+                            </label>
+                        </div>
+                        <div class="v-field">
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Bind Scale</strong>
+                            <input type="checkbox" data-config="bindScale"
+                            data-type="boolean" {{#if node.config.bindScale}}checked{{/if}}></p>
+                            <p>(default <code>true</code>) - causes the effect to bind its scale to the object if <code>Scale Object node</code> is used</p>
+                            </label>
+                        </div>
+                        <div class="v-field">
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Bind Rotation</strong>
+                            <input type="checkbox" data-config="bindRotation"
+                            data-type="boolean" {{#if node.config.bindRotation}}checked{{/if}}></p>
+                            <p>(default <code>true</code>) - causes the effect to rotate along with the attached object</p>
+                        </label>
+                        </div>
+                        <div class="v-field">
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Local</strong>
+                                <input type="checkbox" data-config="local" data-type="boolean"
+                            {{#if node.config.local}}checked{{/if}}></p>
+                            <p>(default <code>false</code>) - Used with <code>offset</code> to cause the location to be offset locally to the effect’s rotation</p>
+                            </label>
+                            </div>
+                        <div class="v-field">
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Grid units</strong>
+                                <input type="checkbox" data-config="gridUnits"
+                            data-type="boolean" {{#if node.config.gridUnits}}checked{{/if}}></p>
+                            <p>(default <code>false</code>) - Used with <code>offset</code> to make each whole number represent in <code>x</code> and <code>y</code> to represent the effect’s scene’s grid size</p>
+                        </label>
+                        </div>
+                        <div class="v-field">
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Template</strong>
+                                <input type="checkbox" data-config="template"
+                            data-type="boolean" {{#if node.config.template}}checked{{/if}}></p>
+                            <p>Make the effect use the defined template in the Sequencer database. See <a href="https://fantasycomputer.works/FoundryVTT-Sequencer/#/database-basics?id=why-templates-are-useful" target="_blank" rel="noopener">Why templates are useful</a>.</p>
+                            </label>
                         </div>
                     </fieldset>
                     {{/if}}
@@ -1852,7 +1973,7 @@
                         <legend>Stretch To</legend>
 
                         <div class="v-field">
-                    <label>Modo
+                    <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Mode</strong></p>
                         <select data-config="mode">
                             <option value="selected-target" {{#if (eq node.config.mode "selected-target"
                                 )}}selected{{/if}}>Token target</option>
@@ -2880,6 +3001,13 @@
                     {{#if (eq node.type "radius")}}
                     <fieldset class="v-group">
                         <legend>Radius</legend>
+                        <p><code>.radius(inNumber)</code></p>
+                        <p>Examples:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js"><span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Radius</span> (example <span style="color:#ffcb6b;">15</span>) ///
+</code></pre>
+                        <p>Radius in number of feet (or other units) this sound will be played within. The distance is determined by the scene’s Grid Scale.</p>
+                        <p><strong>Note:</strong> Requires <code>At Location Node</code> to be called as well, or the sound will still be global.</p>
                         <div class="v-field">
                     <label>Radius (scene units)
                         <input type="number" data-config="radius" data-type="number"
@@ -2893,9 +3021,19 @@
                     {{#if (eq node.type "constrainedByWalls")}}
                     <fieldset class="v-group">
                         <legend>Constrained By Walls</legend>
+                        <p><code>.constrainedByWalls(inBool)</code></p>
+                        <p>Examples:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js"><span style="color:#f07178;"> → </span><span style="color:#89ddff;">Constrained By Walls</span> (example <span style="color:#ffcb6b;">true</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">Constrained By Walls</span> (example <span style="color:#ffcb6b;">false</span>) ///
+</code></pre>
+                        <p>Whether the sound will be <strong>completely</strong> blocked by walls.</p>
+                        <p><strong>Notes:</strong></p>
+                        <ul><li>Defaults to <code>false</code></li>
+                        <li>Requires <code>At Location node</code> to be called as well, or the sound will still be global.</li>
+                        <li>If set to <code>true</code>, <code>.Muffled Effect node</code> will have no effect</li></ul>
                         <div class="v-field">
-                    <label><input type="checkbox" data-config="constrainedByWalls" data-type="boolean" {{#if node.config.constrainedByWalls}}checked{{/if}}>
-                    constrainedByWalls</label>
+                    <label>Constrained By Walls<input type="checkbox" data-config="constrainedByWalls" data-type="boolean" {{#if node.config.constrainedByWalls}}checked{{/if}}>
+                    </label>
                         </div>
                     </fieldset>
                     {{/if}}
@@ -2904,6 +3042,16 @@
                     {{#if (eq node.type "distanceEasing")}}
                     <fieldset class="v-group">
                         <legend>Distance Easing</legend>
+                        <p><code>.distanceEasing(inBool)</code></p>
+                        <p>Examples:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js"><span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Distance Easing</span> (example <span style="color:#ffcb6b;">true</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">Distance Easing</span> (example <span style="color:#ffcb6b;">false</span>) ///
+</code></pre>
+                        <p>Whether the sound will have its volume eased by the distance from its origin.</p>
+                        <p><strong>Notes:</strong></p>
+                        <ul><li>Defaults to <code>true</code></li>
+                        <li>Requires <code>At Location node</code> to be called as well, or the sound will still be global.</li></ul>                     
                         <div class="v-field">
                     <label>Apply easing by distance
                         <select data-config="distanceEasing">
@@ -2920,9 +3068,26 @@
                     {{#if (eq node.type "audioChannel")}}
                     <fieldset class="v-group">
                         <legend>Audio Channel</legend>
+                        <p><code>.audioChannel(inString)</code></p>
+                        <p>Examples:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js"><span style="color:#f07178;"> → </span><span style="color:#89ddff;">Audio Channel</span> (example <span style="color:#ffcb6b;">music</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">Audio Channel</span> (example <span style="color:#ffcb6b;">environment</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">Audio Channel</span> (example <span style="color:#ffcb6b;">interface</span>) ///
+</code></pre>
+                        <p>Set the sound output channel.</p>
+                        <p><strong>Notes:</strong></p>
+                        <ul><li>Defaults to <code>interface</code></li></ul>
                         <div class="v-field">
                     <label>Channel name
-                        <input type="text" data-config="audioChannel" value="{{node.config.audioChannel}}">
+                                <select data-config="audioChannel">
+                                    <option value="" {{#unless node.config.type}}selected{{/unless}}>-</option>
+                                    <option value="environment" {{#if (eq node.config.mode "environment" )}}selected{{/if}}>Environment
+                                    </option>
+                                    <option value="interface" {{#if (eq node.config.mode "interface" )}}selected{{/if}}>
+                                        Interface</option>
+                                    <option value="music" {{#if (eq node.config.mode "music" )}}selected{{/if}}>Music
+                                    </option>
+                                </select>
                     </label>
                         </div>
                     </fieldset>
@@ -2932,9 +3097,19 @@
                     {{#if (eq node.type "alwaysForGMs")}}
                     <fieldset class="v-group">
                         <legend>Always For GMs</legend>
+                        <p><code>.alwaysForGMs(inBool)</code></p>
+                        <p>Examples:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js"><span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Always For GMs</span> (example <span style="color:#ffcb6b;">true</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">Always For GMs</span> (example <span style="color:#ffcb6b;">false</span>) ///
+</code></pre>
+                        <p>Whether the sound will play for GMs as if they were hearing it at the origin of the sound.</p>
+                        <p><strong>Notes:</strong></p>
+                        <ul><li>Defaults to <code>false</code></li>
+                        <li>Requires <code>At Location node</code> to be called as well, or the sound will still be global.</li></ul>
                         <div class="v-field">
-                    <label><input type="checkbox" data-config="alwaysForGMs" data-type="boolean" {{#if node.config.alwaysForGMs}}checked{{/if}}>
-                    alwaysForGMs</label>
+                    <label>Always For GMs<input type="checkbox" data-config="alwaysForGMs" data-type="boolean" {{#if node.config.alwaysForGMs}}checked{{/if}}>
+                    </label>
                         </div>
                     </fieldset>
                     {{/if}}
@@ -2943,6 +3118,20 @@
                     {{#if (eq node.type "baseEffect")}}
                     <fieldset class="v-group">
                         <legend>Base Effect</legend>
+                        <p><code>.baseEffect(options)</code></p>
+                        <p>Examples:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js"><span style="color:#f07178;"> → </span><span style="color:#89ddff;">Base Effect</span> (example <span style="color:#ffcb6b;">{ type: 'lowpass', intensity: 4 }</span>) ///
+</code></pre>
+                        <p>An effect to be applied on the sound when it is heard as per normal, with no walls blocking the sound.</p>
+                        <p>The options object this method accept can have the following two parameters:</p>
+                        <ul><li><code>type</code>: one of the effects in <code>CONFIG.soundEffects</code>, as of Foundry V12, this is:<ul>
+                            <li><code>lowpass</code></li>
+                            <li><code>highpass</code></li>
+                            <li><code>reverb</code></li>
+                        </ul></li>
+                        <li><code>intensity</code>: how strong this type of effect will be</li></ul>
+                        <p><strong>Notes:</strong></p>
+                        <ul><li>Requires <code>At Location node</code> to be called as well, as this is an effect only applicable to position-based sounds.</li></ul>
                         <div class="v-field">
                     <label>Type
                         <select data-config="type">
@@ -2969,6 +3158,21 @@
                     {{#if (eq node.type "muffledEffect")}}
                     <fieldset class="v-group">
                         <legend>Muffled Effect</legend>
+                        <p><code>.muffledEffect(options)</code></p>
+                        <p>Examples:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js"><span style="color:#f07178;"> → </span><span style="color:#89ddff;">Muffled Effect</span> (example <span style="color:#ffcb6b;">{ type: 'lowpass', intensity: 4 }</span>) ///
+</code></pre>
+                        <p>An effect to be applied on the sound when it is heard through walls.</p>
+                        <p>The options object this method accept can have the following two parameters:</p>
+                        <ul><li><code>type</code>: one of the effects in <code>CONFIG.soundEffects</code>, as of Foundry V12, this is:<ul>
+                            <li><code>lowpass</code></li>
+                            <li><code>highpass</code></li>
+                            <li><code>reverb</code></li>
+                        </ul></li>
+                        <li><code>intensity</code>: how strong this type of effect will be</li></ul>
+                        <p><strong>Notes:</strong></p>
+                        <ul><li>Requires <code>At Location node</code> to be called as well, as this is an effect only applicable to position-based sounds.</li>
+                        <li>Requires <code>Constrained By Walls node</code> to be set to <code>false</code>(wich is the default behavior).</li></ul>
                         <div class="v-field">
                             <label>Type
                                 <select data-config="type">
@@ -3004,6 +3208,7 @@
                         <div class="v-field">
                             <label>Direction / Anchor
                                 <input type="text" data-config="direction" value="{{node.config.direction}}">
+                                
                             </label>
                         </div>
                     </fieldset>
@@ -3124,9 +3329,21 @@
                     {{#if (eq node.type "crosshairType")}}
                     <fieldset class="v-group">
                         <legend>Crosshair Type</legend>
+                        <p><code>.type(string)</code></p>
+                        <p>Sets the type of Measurable Template to create.</p>
                         <div class="v-field">
                             <label>Type
                                 <input type="text" data-config="type" value="{{node.config.type}}">
+                                <select data-config="type">
+                                    <option value="circle" {{#if (eq node.config.mode "circle"
+                                        )}}selected{{/if}}>Circle</option>
+                                    <option value="cone" {{#if (eq node.config.mode "cone"
+                                        )}}selected{{/if}}>Cone</option>
+                                    <option value="rect" {{#if (eq node.config.mode "rect" )}}selected{{/if}}>
+                                        Rectangle</option>
+                                    <option value="ray" {{#if (eq node.config.mode "ray"
+                                        )}}selected{{/if}}>Ray</option>
+                                </select>
                             </label>
                         </div>
                     </fieldset>
@@ -3136,11 +3353,16 @@
                     {{#if (eq node.type "crosshairLabel")}}
                     <fieldset class="v-group">
                         <legend>Crosshair Label</legend>
+                        <code>.label(string, object)</code>
+                        <p>Sets a custom label to be set as a part of this crosshair</p>
                         <div class="v-field">
                             <label>Label
                                 <input type="text" data-config="label" value="{{node.config.label}}">
                             </label>
                         </div>
+                        <p>Also supports a second options object that accepts:</p>
+                        <ul><li><code>dx: number</code> - Sets the x position offset of the label in pixels</li>
+                        <li><code>dy: number</code> - Sets the y position offset of the label in pixels</li></ul>
                         <div class="v-field grid-2">
                             <label>dx
                                 <input type="number" data-config="dx" data-type="number" value="{{node.config.dx}}">
@@ -3156,6 +3378,14 @@
                     {{#if (eq node.type "crosshairSnapPosition")}}
                     <fieldset class="v-group">
                         <legend>Snap Position</legend>
+                        <p><code>.snapPosition(number)</code></p>
+                        <p>Sets how the position of the crosshair should snap on the grid. </p>
+                        <p>Use <code>CONST.GRID_SNAPPING_MODES</code> to determine this, eg:</p>
+                        <p><ul><li><code>.snapPosition(CONST.GRID_SNAPPING_MODES.CENTER)</code>
+                        - snaps to the center of each grid square/hex</li>
+                        <li><code>.snapPosition(CONST.GRID_SNAPPING_MODES.CENTER |</code><code>CONST.GRID_SNAPPING_MODES.VERTEX)</code>
+                        - snaps to the center and each vertex (intersections) of each grid square/hex</li></ul></p>
+                        <p>It is specifically one <code>|</code> and not two - this is a bitwise operation, which is a fancy way that maths works for computers. Google bitwise operations if you want to understand it at length.</p>
                         <div class="v-field">
                             <label>Mode / Value
                                 <input type="text" data-config="snapPosition" value="{{node.config.snapPosition}}">
@@ -3167,7 +3397,12 @@
                     {{!-- CROSSHAIR DISTANCE (child) --}}
                     {{#if (eq node.type "crosshairDistance")}}
                     <fieldset class="v-group">
-                        <legend>Distance / Radius</legend>
+                        <legend>Distance</legend>
+                        <p><code>.distance(number, object)</code></p>
+                        <p>Sets the distance for the crosshair - or radius for a circular crosshair</p>
+                        <p>Also supports a second options object that accepts:</p>
+                        <ul><li><code>min: number</code> - Caps the crosshair’s distance above this minimum value, which it cannot go below</li>
+                        <li><code>max: number</code> - Caps the crosshair’s distance to this maximum value, which it cannot exceed</li></ul>
                         <div class="v-field">
                             <label>Distance
                                 <input type="number" data-config="distance" data-type="number"
@@ -3189,6 +3424,8 @@
                     {{#if (eq node.type "crosshairAngle")}}
                     <fieldset class="v-group">
                         <legend>Angle</legend>
+                        <p><code>.angle(number)</code></p>
+                        <p>Configures the angle of the crosshair - mostly used for the width of cone crosshairs</p>
                         <div class="v-field">
                             <label>Angle (deg)
                                 <input type="number" data-config="angle" data-type="number"
@@ -3202,6 +3439,8 @@
                     {{#if (eq node.type "crosshairWidth")}}
                     <fieldset class="v-group">
                         <legend>Width</legend>
+                        <p><code>.width(number)</code></p>
+                        <p>Configures the width for the crosshair - used for ray crosshairs</p>
                         <div class="v-field">
                             <label>Width
                                 <input type="number" data-config="width" data-type="number"
@@ -3215,6 +3454,8 @@
                     {{#if (eq node.type "crosshairSnapDirection")}}
                     <fieldset class="v-group">
                         <legend>Snap Direction</legend>
+                        <p><code>.snapDirection(number)</code></p>
+                        <p>Configures the increments the direction should snap along. <code>45</code> would make it only snap in diagonal, horizontal, and vertical directions.</p>
                         <div class="v-field">
                             <label>Increment (deg)
                                 <input type="number" data-config="snapDirection" data-type="number"
@@ -3228,11 +3469,13 @@
                     {{#if (eq node.type "crosshairLockManualRotation")}}
                     <fieldset class="v-group">
                         <legend>Manual Rotation</legend>
+                        <p><code>.lockManualRotation(boolean)</code></p>
+                        <p>Toggles whether the crosshair can be manually rotated</p>
                         <div class="v-field">
                             <label>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Lock manual rotation</strong></p>
                                 <input type="checkbox" data-config="lock" data-type="boolean" {{#if
                                     node.config.lock}}checked{{/if}}>
-                                Lock manual rotation
                             </label>
                         </div>
                     </fieldset>
@@ -3242,11 +3485,13 @@
                     {{#if (eq node.type "crosshairLockDrag")}}
                     <fieldset class="v-group">
                         <legend>Lock Drag</legend>
+                        <p><code>.lockDrag(boolean)</code></p>
+                        <p>Toggles whether the crosshair’s end position can be dragged</p>
                         <div class="v-field">
                             <label>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Prevent drag movement</strong></p>
                                 <input type="checkbox" data-config="lock" data-type="boolean" {{#if
                                     node.config.lock}}checked{{/if}}>
-                                Prevent drag movement
                             </label>
                         </div>
                     </fieldset>
@@ -3256,6 +3501,10 @@
                     {{#if (eq node.type "crosshairIcon")}}
                     <fieldset class="v-group">
                         <legend>Icon</legend>
+                        <p><code>.icon(string, inOptions)</code></p>
+                        <p>Configures the custom icon to be used on the crosshair</p>
+                        <p>Also supports a second options object that accepts:</p>
+                        <ul><li><code>borderVisible: boolean</code> - Causes the border of the icon to be visible</li></ul>
                         <div class="v-field">
                             <label>Icon path
                                 <input type="text" data-config="icon" value="{{node.config.icon}}">
@@ -3263,9 +3512,9 @@
                         </div>
                         <div class="v-field">
                             <label>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Show icon border</strong>
                                 <input type="checkbox" data-config="borderVisible" data-type="boolean" {{#if
-                                    node.config.borderVisible}}checked{{/if}}>
-                                Show icon border
+                                    node.config.borderVisible}}checked{{/if}}></p>                                
                             </label>
                         </div>
                     </fieldset>
@@ -3275,6 +3524,10 @@
                     {{#if (eq node.type "crosshairBorderColor")}}
                     <fieldset class="v-group">
                         <legend>Border Color</legend>
+                        <p><code>.borderColor(HEX | number, inOptions)</code></p>
+                        <p>Sets the border color of the crosshair</p>
+                        <p>Also supports a second options object that accepts:</p>
+                        <ul><li><code>alpha: number</code> - The transparency of the border (0-1, default <code>0.5</code>)</li></ul>
                         <div class="v-field">
                             <label>Color
                                 <input type="text" data-config="color" value="{{node.config.color}}">
@@ -3293,6 +3546,10 @@
                     {{#if (eq node.type "crosshairFillColor")}}
                     <fieldset class="v-group">
                         <legend>Fill Color</legend>
+                        <p><code>.fillColor(HEX | number, inOptions)</code></p>
+                        <p>Sets the fill color of the crosshair</p>
+                        <p>Also supports a second options object that accepts:</p>
+                        <ul><li><code>alpha: number</code> - The transparency of the fill color (0-1, default <code>0.25</code>)</li></ul>
                         <div class="v-field">
                             <label>Color
                                 <input type="text" data-config="color" value="{{node.config.color}}">
@@ -3311,6 +3568,11 @@
                     {{#if (eq node.type "crosshairTexture")}}
                     <fieldset class="v-group">
                         <legend>Texture</legend>
+                        <p><code>.texture(string, inOptions)</code></p>
+                        <p>Configures the texture shown within the template</p>
+                        <p>Also supports a second options object that accepts:</p>
+                        <ul><li><code>alpha: number</code> - The transparency of the texture (0-1, default <code>0.5</code>)</li>
+                        <li><code>scale: number</code> - The scale multiplier for the texture size (default <code>1</code>)</li></ul>
                         <div class="v-field">
                             <label>Texture path
                                 <input type="text" data-config="texture" value="{{node.config.texture}}">
@@ -3332,138 +3594,144 @@
                     {{!-- CROSSHAIR LOCATION (child) --}}
                     {{#if (eq node.type "crosshairLocation")}}
                     <fieldset class="v-group">
-                        <legend>Crosshair Source</legend>
+                        <legend>Crosshair Location</legend>
+                        <p><code>.location(object|string, object)</code></p>
+                        <p>Examples:</p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js"><span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Crosshair Location</span> (example <span style="color:#ffcb6b;">token</span>)///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">Crosshair Location</span> (example <span style="color:#ffcb6b;">token</span>, <span style="#ffcb6b">Show Range: true</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">Crosshair Location</span> (example <span style="color:#ffcb6b;">token</span>, <span style="#ffcb6b">Lock to Edge: true</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">Crosshair Location</span> (example <span style="color:#ffcb6b;">token</span>, <span style="#ffcb6b">Lock to Edge: true</span>, <span style="#ffcb6b">Lock to Edge Direction: true</span>) ///
+<span style="color:#f07178;"> → </span><span style="color:#89ddff;">Crosshair Location</span> (example <span style="color:#ffcb6b;">token</span>, <span style="#ffcb6b">Limit Max Range: 20</span>) ///
+</code></pre>
+                        <p>Configures the source location of the crosshair, usually to limit it around the target placeable object, or to
+                        cause it to be limited within a certain range of the placeable object.</p>
+                        <p>Also supports a second options object that accepts:</p>
+                        <ul><li><code>limitMinRange: number</code> - Causes the crosshair to not be able to be placed within this number of grid units of the location
+                        <code>limitMaxRange: number</code> - Causes the crosshair to not be able to be placed beyond this number of grid units of the location</li>
+                        <li><code>showRange: boolean</code> - Displays the distance between the crosshair and the location in grid units under the crosshair</li>
+                        <li><code>lockToEdge: boolean</code> - Whether to lock the crosshair to the edge of the target (mostly used with tokens)</li>
+                        <li><code>lockToEdgeDirection: boolean</code> - Causes the crosshair to be locked along the normal of the token’s edge (and corner, in the case of square tokens)</li>
+                        <li><code>offset: object</code> - (default <code>{ x: 0, y: 0 }</code>) - causes the location to be offset by this many pixels,</li>
+                        <li><code>wallBehavior: string</code> - Causes the crosshair to be unable to be placed based on this configuration, eg only within sight, or no walls at all between crosshair and location, or anywhere. See <code>Sequencer.Crosshair.PLACEMENT_RESTRICTIONS</code></li><li><code>displayRangePoly: boolean</code> - Causes a polygon to be rendered below the object that shows the limit based on the limitMaxRange set above - this requires both that, and obj to have a position</li><li><code>rangePolyFillColor: number</code> - The fill color of the range polygon</li><li><code>rangePolyLineColor: number</code> - The line color of the range polygon</li><li><code>rangePolyFillAlpha: number</code> - The fill alpha of the range polygon</li>
+                        <li><code>rangePolyLineAlpha: number</code> - The line alpha of the range polygon</li></ul>
                         <div class="v-field">
                             <label>Mode
                                 <select data-config="mode">
                                     <option value="selected-token" {{#if (eq node.config.mode "selected-token"
-                                        )}}selected{{/if}}>Token seleccionado</option>
+                                        )}}selected{{/if}}>Token selected</option>
                                     <option value="selected-target" {{#if (eq node.config.mode "selected-target"
-                                        )}}selected{{/if}}>Objetivo seleccionado</option>
+                                        )}}selected{{/if}}>Objetive selected</option>
                                     <option value="token-id" {{#if (eq node.config.mode "token-id" )}}selected{{/if}}>
-                                        Token por ID</option>
+                                        Token by ID</option>
                                     <option value="token-name" {{#if (eq node.config.mode "token-name"
-                                        )}}selected{{/if}}>Token por nombre</option>
+                                        )}}selected{{/if}}>Token by name</option>
                                     <option value="tile-id" {{#if (eq node.config.mode "tile-id" )}}selected{{/if}}>Tile
-                                        por ID</option>
+                                        by ID</option>
                                     <option value="stored-name" {{#if (eq node.config.mode "stored-name"
-                                        )}}selected{{/if}}>Nombre almacenado</option>
+                                        )}}selected{{/if}}>Stored name</option>
                                     <option value="point" {{#if (eq node.config.mode "point" )}}selected{{/if}}>
-                                        Coordenadas</option>
+                                        Coordinates</option>
                                 </select>
                             </label>
                         </div>
                         <div class="v-field">
-                            <label>Stored name
+                            <label>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Stored name</strong></p>
                                 <input type="text" data-config="storedName" value="{{node.config.storedName}}">
                             </label>
                         </div>
                         <div class="v-field grid-2">
-                            <label>Token ID
+                            <label>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Token ID</strong></p>
                                 <input type="text" data-config="tokenId" value="{{node.config.tokenId}}">
                             </label>
-                            <label>Token name
+                            <label>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Token Name</strong></p>
                                 <input type="text" data-config="tokenName" value="{{node.config.tokenName}}">
                             </label>
                         </div>
                         <div class="v-field">
-                            <label>Tile ID
+                            <label>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Tile ID</strong></p>
                                 <input type="text" data-config="tileId" value="{{node.config.tileId}}">
                             </label>
                         </div>
                         <div class="v-field grid-2">
-                            <label>X
+                            <label>
+                                <p style="display:flex;align-items:center;gap:0.5rem;"><strong>Coordinates (X)</strong></p>
                                 <input type="number" data-config="x" data-type="number" value="{{node.config.x}}">
                             </label>
-                            <label>Y
-                                <input type="number" data-config="y" data-type="number" value="{{node.config.y}}">
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Coordinates (Y)</strong>
+                                <input type="number" data-config="y" data-type="number" value="{{node.config.y}}"></p>
                             </label>
                         </div>
                         <div class="v-field grid-2">
-                            <label>Min range
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Minimum Range</strong>
                                 <input type="number" data-config="limitMinRange" data-type="number"
-                                    value="{{node.config.limitMinRange}}">
+                                    value="{{node.config.limitMinRange}}"></p>
                             </label>
-                            <label>Max range
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Maximum Range</strong>
                                 <input type="number" data-config="limitMaxRange" data-type="number"
-                                    value="{{node.config.limitMaxRange}}">
+                                    value="{{node.config.limitMaxRange}}"></p>
                             </label>
                         </div>
                         <div class="v-field">
-                            <label>
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Show Range in HUD</strong>
                                 <input type="checkbox" data-config="showRange" data-type="boolean" {{#if
-                                    node.config.showRange}}checked{{/if}}>
-                                Mostrar rango en HUD
+                                    node.config.showRange}}checked{{/if}}></p>
                             </label>
                         </div>
                         <div class="v-field">
-                            <label>
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Block to the objective border</strong>
                                 <input type="checkbox" data-config="lockToEdge" data-type="boolean" {{#if
-                                    node.config.lockToEdge}}checked{{/if}}>
-                                Bloquear al borde del objetivo
+                                    node.config.lockToEdge}}checked{{/if}}></p>
                             </label>
                         </div>
                         <div class="v-field">
-                            <label>
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Use border normal</strong>
                                 <input type="checkbox" data-config="lockToEdgeDirection" data-type="boolean" {{#if
-                                    node.config.lockToEdgeDirection}}checked{{/if}}>
-                                Usar normal del borde
+                                    node.config.lockToEdgeDirection}}checked{{/if}}></p>
                             </label>
                         </div>
                         <div class="v-field grid-2">
-                            <label>Offset X
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Offset X</strong>
                                 <input type="number" data-config="offsetX" data-type="number"
-                                    value="{{node.config.offsetX}}">
+                                    value="{{node.config.offsetX}}"></p>
                             </label>
-                            <label>Offset Y
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Offset Y</strong>
                                 <input type="number" data-config="offsetY" data-type="number"
-                                    value="{{node.config.offsetY}}">
+                                    value="{{node.config.offsetY}}"></p>
                             </label>
                         </div>
                         <div class="v-field">
-                            <label>Wall behavior
-                                <input type="text" data-config="wallBehavior" value="{{node.config.wallBehavior}}">
-                            </label>
-                        </div>
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Wall behavior</strong>
+                                <input type="text" data-config="wallBehavior" value="{{node.config.wallBehavior}}"></p>
+                            </label></div>
                         <div class="v-field">
-                            <label>
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Show range polygon</strong>
                                 <input type="checkbox" data-config="displayRangePoly" data-type="boolean" {{#if
-                                    node.config.displayRangePoly}}checked{{/if}}>
-                                Mostrar polígono de rango
+                                    node.config.displayRangePoly}}checked{{/if}}></p>
                             </label>
                         </div>
                         <div class="v-field grid-2">
-                            <label>Relleno
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Fill color</strong>
                                 <input type="text" data-config="rangePolyFillColor"
-                                    value="{{node.config.rangePolyFillColor}}">
+                                    value="{{node.config.rangePolyFillColor}}"></p>
                             </label>
-                            <label>Borde
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Border color</strong>
                                 <input type="text" data-config="rangePolyLineColor"
-                                    value="{{node.config.rangePolyLineColor}}">
+                                    value="{{node.config.rangePolyLineColor}}"></p>
                             </label>
                         </div>
                         <div class="v-field grid-2">
-                            <label>Alpha relleno
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>FIll alpha</strong>
                                 <input type="number" step="0.05" min="0" max="1" data-config="rangePolyFillAlpha"
-                                    data-type="number" value="{{node.config.rangePolyFillAlpha}}">
+                                    data-type="number" value="{{node.config.rangePolyFillAlpha}}"></p>
                             </label>
-                            <label>Alpha borde
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Border alpha</strong>
                                 <input type="number" step="0.05" min="0" max="1" data-config="rangePolyLineAlpha"
-                                    data-type="number" value="{{node.config.rangePolyLineAlpha}}">
-                            </label>
-                        </div>
-                    </fieldset>
-                    {{/if}}
-
-                    {{!-- CROSSHAIR PERSIST (child) --}}
-                    {{#if (eq node.type "crosshairPersist")}}
-                    <fieldset class="v-group">
-                        <legend>Persist</legend>
-                        <div class="v-field">
-                            <label>
-                                <input type="checkbox" data-config="persist" data-type="boolean" {{#if
-                                    node.config.persist}}checked{{/if}}>
-                                Spawn measured template
+                                    data-type="number" value="{{node.config.rangePolyLineAlpha}}"></p>
                             </label>
                         </div>
                     </fieldset>
@@ -3473,10 +3741,11 @@
                     {{#if (eq node.type "crosshairGridHighlight")}}
                     <fieldset class="v-group">
                         <legend>Grid Highlight</legend>
+                        <p><code>.gridHighlight(boolean)</code></p>
+                        <p>Toggles whether this crosshair should highlight the grid.</p>
                         <div class="v-field">
-                            <label>
-                                <input type="checkbox" data-config="highlight" data-type="boolean" {{#if node.config.highlight}}checked{{/if}}>
-                                Highlight grid
+                            <label><p style="display:flex;align-items:center;gap:0.5rem;"><strong>Highlight grid</strong>
+                                <input type="checkbox" data-config="highlight" data-type="boolean" {{#if node.config.highlight}}checked{{/if}}></p>
                             </label>
                         </div>
                     </fieldset>
@@ -3486,6 +3755,17 @@
                     {{#if (eq node.type "crosshairCallback")}}
                     <fieldset class="v-group">
                         <legend>Crosshair Callback</legend>
+                        <p><code>.callback(inString, inFunction)</code></p>
+                        <pre v-pre="" data-lang="js" class="language-js"><code class="lang-js language-js">
+<span style="color:#89ddff;">Start / Sequence</span><span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Crosshair</span><span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Crosshair Callback</span> (<span style="color:#ffcb6b;">"myHook"</span>, <span style="color:#ffcb6b;">(crosshair) =&gt; {</span>
+    <span style="color:#ff9cac;">// Your code here, using the crosshair object</span>
+<span style="color:#ffcb6b;">}</span>)<span style="color:#f07178;"> → </span>
+<span style="color:#89ddff;">Play</span><span style="color:#f07178;"> → </span>
+</code></pre>
+                        <p>This allows you to run functions when certain events happens with the crosshair, such as changing the icon. Most functions are passed the crosshair object.</p>
+                        <p>This requires the use of <code>Sequencer.Crosshair.CALLBACKS</code> as the first parameter.</p>
                         <div class="v-field">
                             <label>Hook constant/expression
                                 <input type="text" data-config="hook" value="{{node.config.hook}}">
