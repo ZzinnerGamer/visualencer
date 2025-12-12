@@ -1810,18 +1810,6 @@ VisualencerNodeTypes.register("templateOpts", {
   }
 });
 
-VisualencerNodeTypes.register("setMustache", {
-  label: "Set Mustache",
-  category: "effect",
-  role: "child",
-  families: ["effect"],
-  createConfig() { return { data: "{\\n  \"color\": \"Blue\"\\n}" }; },
-  compileChild(node, block, _ctx) {
-    const raw = node.config?.data || "{}";
-    block.lines.push(`  .setMustache(${raw})`);
-  }
-});
-
 VisualencerNodeTypes.register("scale", {
   label: "Scale",
   category: "effect",
@@ -2017,32 +2005,73 @@ VisualencerNodeTypes.register("playbackRate", {
   }
 });
 
-VisualencerNodeTypes.register("layering", {
-  label: "Layering",
+VisualencerNodeTypes.register("belowTokens", {
+  label: "Below Tokens",
   category: "effect",
   role: "child",
   families: ["effect"],
-  createConfig() {
-    return {
-      belowTokens: false,
-      belowTiles: false,
-      aboveLighting: false,
-      aboveInterface: false,
-      zIndex: 0,
-      sortLayer: 0
-    };
-  },
+  createConfig() {return { enabled: true }; },
   compileChild(node, block, _ctx) {
-    const c = node.config || {};
-    const { num } = VHelpers;
-    if (c.belowTokens) block.lines.push("  .belowTokens(true)");
-    if (c.belowTiles) block.lines.push("  .belowTiles(true)");
-    if (c.aboveLighting) block.lines.push("  .aboveLighting(true)");
-    if (c.aboveInterface) block.lines.push("  .aboveInterface(true)");
-    if (num(c.zIndex)) block.lines.push(`  .zIndex(${num(c.zIndex)})`);
-    if (num(c.sortLayer)) block.lines.push(`  .sortLayer(${num(c.sortLayer)})`);
+    if (node.config?.enabled) block.lines.push("  .belowTokens()");
+  } 
+})
+
+VisualencerNodeTypes.register("belowTiles", {
+  label: "Below Tiles",
+  category: "effect",
+  role: "child",
+  families: ["effect"],
+  createConfig() {return { enabled: true }; },
+  compileChild(node, block, _ctx) {
+    if (node.config?.enabled) block.lines.push("  .belowTiles()");
+  } 
+})
+
+VisualencerNodeTypes.register("aboveLighting", {
+  label: "Above Lighting",
+  category: "effect",
+  role: "child",
+  families: ["effect"],
+  createConfig() {return { enabled: true }; },
+  compileChild(node, block, _ctx) {
+    if (node.config?.enabled) block.lines.push("  .aboveLighting()");
+  } 
+})
+
+VisualencerNodeTypes.register("aboveInterface", {
+  label: "Above Interface",
+  category: "effect",
+  role: "child",
+  families: ["effect"],
+  createConfig() {return { enabled: true }; },
+  compileChild(node, block, _ctx) {
+    if (node.config?.enabled) block.lines.push("  .aboveInterface()");
+  } 
+})
+
+VisualencerNodeTypes.register("zIndex", {
+  label: "Z Index",
+  category: "effect",
+  role: "child",
+  families: ["effect"],
+  createConfig() { return { zIndex: 1 }; },
+  compileChild(node, block, _ctx) {
+    const r = Number(node.config?.rate);
+    if (Number.isFinite(r)) block.lines.push(`  .zIndex(${r})`);
   }
-});
+})
+
+VisualencerNodeTypes.register("sortLayer", {
+  label: "Sort Layer",
+  category: "effect",
+  role: "child",
+  families: ["effect"],
+  createConfig() { return { sortLayer: 800 }; },
+  compileChild(node, block, _ctx) {
+    const r = Number(node.config?.rate);
+    if (Number.isFinite(r)) block.lines.push(`  .sortLayer(${r})`);
+  }
+})
 
 VisualencerNodeTypes.register("animateProperty", {
   label: "Animate Property",
@@ -2122,7 +2151,10 @@ VisualencerNodeTypes.register("filter", {
   createConfig() { return { filter: "", options: "{}" }; },
   compileChild(node, block, _ctx) {
     const name = (node.config?.filter || "").trim();
-    if (!name) return;
+    if (!name) {
+      console.debug("Visualencer: filter node has no filter name", node.config);
+      return;
+    }
     block.lines.push(`  .filter("${VHelpers.esc(name)}", ${node.config.options || "{}"})`);
   }
 });
@@ -2846,7 +2878,7 @@ VisualencerNodeTypes.register("setMustache", {
   category: "effect",
   role: "child",
   families: ["effect", "sound"],
-  createConfig() { return { mustache: "{\\n  \"color\": \"Blue\"\\n}" }; },
+  createConfig() { return { mustache: "{ \"color\": \"Blue\" }" }; },
   compileChild(node, block, _ctx) {
     const raw = (node.config?.mustache || "").trim();
     if (!raw) return;
@@ -3154,7 +3186,10 @@ VisualencerNodeTypes.register("filter", {
   createConfig() { return { filter: "", options: "{}" }; },
   compileChild(node, block, _ctx) {
     const name = (node.config?.filter || "").trim();
-    if (!name) return;
+    if (!name) {
+      console.debug("Visualencer: filter node has no filter name", node.config);
+      return;
+    }
     block.lines.push(`  .filter("${VHelpers.esc(name)}", ${node.config.options || "{}"})`);
   }
 });
@@ -3164,7 +3199,7 @@ VisualencerNodeTypes.register("shape", {
   category: "effect",
   role: "child",
   families: ["effect"],
-  createConfig() { return { type: "circle", options: "{\\n  \"radius\": 1\\n}" }; },
+  createConfig() { return { type: "circle", options: "{ radius: 1 }" }; },
   compileChild(node, block, _ctx) {
     const type = (node.config?.type || "").trim();
     if (!type) return;
